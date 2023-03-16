@@ -7,6 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rimraf **/*/node_modules && rimraf node_modules",
+    "dev:test": "pnpm run -C packages/dev-test dev",
     "build:vue-plus": "pnpm run -C packages/vue-plus build",
     "build:plugin-vue-plus": "pnpm run -C packages/plugin-vue-plus build"
   },
@@ -28,9 +29,6 @@
     "typescript": "^4.9.5",
     "vue": "^3.2.47"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "dependencies": {
     "rollup-plugin-typescript2": "^0.34.1"
   },
