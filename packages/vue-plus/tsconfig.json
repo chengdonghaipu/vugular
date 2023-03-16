@@ -6,7 +6,9 @@
     "outDir": "dist",
     "sourceMap": true,
     "strict": true,
-    "target": "ES2017"
+    "target": "ES2017",
+    "baseUrl": ".",
+    "types": ["vue"]
   },
   "include": ["src"]
 }
