@@ -9,7 +9,8 @@
     "clean": "rimraf **/*/node_modules && rimraf node_modules",
     "dev:test": "pnpm run -C packages/dev-test dev",
     "build:vue-plus": "pnpm run -C packages/vue-plus build",
-    "build:plugin-vue-plus": "pnpm run -C packages/plugin-vue-plus build"
+    "build:plugin-vue-plus": "pnpm run -C packages/plugin-vue-plus build",
+    "start:dev-test": "pnpm run -C packages/dev-test dev"
   },
   "keywords": [],
   "author": "",
