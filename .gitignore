@@ -1,0 +1,6 @@
+node_modules/
+dist/
+packages/plugin-vue-plus/dist
+packages/plugin-vue-plus/node_modules
+packages/vue-plus/dist
+packages/vue-plus/node_modules
