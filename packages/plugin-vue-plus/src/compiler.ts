@@ -55,8 +55,7 @@ export class Compiler {
   needInjectableInjector = false;
   static getDecorator(decorators: readonly ts.Decorator[], decoratorName: string): ts.Decorator | undefined {
     return decorators?.find((decorator) => {
-      // @ts-ignore
-      const identifier = decorator.expression?.expression;
+      const identifier = (decorator.expression as any)?.expression;
       return identifier.escapedText === decoratorName;
     }) as ts.Decorator;
   }
@@ -117,6 +116,7 @@ export class Compiler {
       }
 
       namedBindings.elements.forEach((element) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         appendDep[text](element.name.escapedText);
       });
