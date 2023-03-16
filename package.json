@@ -6,7 +6,9 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "rimraf **/*/node_modules && rimraf node_modules"
+    "clean": "rimraf **/*/node_modules && rimraf node_modules",
+    "build:vue-plus": "pnpm run -C packages/vue-plus build",
+    "build:plugin-vue-plus": "pnpm run -C packages/plugin-vue-plus build"
   },
   "keywords": [],
   "author": "",
@@ -18,11 +20,13 @@
     "eslint": "^8.36.0",
     "eslint-config-prettier": "^8.7.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "lerna": "^6.5.1",
     "prettier": "^2.8.4",
+    "rimraf": "^4.4.0",
+    "rollup": "^3.19.1",
     "ts-node": "^10.9.1",
+    "tslib": "^2.5.0",
     "typescript": "^4.9.5",
-    "rimraf": "^4.4.0"
+    "vue": "^3.2.47"
   },
   "workspaces": [
     "packages/*"
