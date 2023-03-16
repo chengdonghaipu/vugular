@@ -17,10 +17,10 @@ const distPkg = {
     version: pkg.version,
     description: pkg.description,
     main: './dist/index.cjs',
-    module: './esm2015/index.mjs',
-    types: './esm2015/index.d.ts',
-    typings: './esm2015/index.d.ts',
-    esm2015: './esm2015/index.mjs',
+    module: './esm2017/index.mjs',
+    types: './esm2017/index.d.ts',
+    typings: './esm2017/index.d.ts',
+    esm2017: './esm2017/index.mjs',
     esm2020: './esm2020/index.mjs',
     exports: {
         "./package.json": {
@@ -28,8 +28,8 @@ const distPkg = {
         },
         '.': {
             // esm2020: '/esm2020/index.mjs',
-            type: './esm2015/index.d.ts',
-            esm2015: './esm2015/index.mjs',
+            type: './esm2017/index.d.ts',
+            esm2017: './esm2017/index.mjs',
             // default: './esm2020/index.mjs',
             "types": "./esm2020/index.d.ts",
             "import": "./esm2020/index.mjs",

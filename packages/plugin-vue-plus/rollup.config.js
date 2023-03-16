@@ -13,7 +13,7 @@ exports.default = [
                 format: 'cjs',
             },
             // {
-            //     file: 'dist/index.es2015.js',
+            //     file: 'dist/index.es2017.js',
             //     format: 'es',
             // },
             // {
@@ -47,11 +47,11 @@ exports.default = [
         input: 'src/index.ts',
         output: [
             {
-                file: 'dist/esm2015/index.mjs',
+                file: 'dist/esm2017/index.mjs',
                 format: 'esm',
             },
             {
-                file: 'dist/esm2015/index.cjs',
+                file: 'dist/esm2017/index.cjs',
                 format: 'cjs',
             },
         ],
@@ -60,8 +60,8 @@ exports.default = [
                 tsconfig: 'tsconfig.json',
                 tsconfigOverride: {
                     compilerOptions: {
-                        target: 'ES2015',
-                        module: 'ES2015',
+                        target: 'ES2017',
+                        module: 'es2020',
                         declaration: true,
                         declarationMap: true,
                         declarationDir: "./index.d.ts",

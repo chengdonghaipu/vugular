@@ -83,8 +83,10 @@ importers:
   packages/vue-plus:
     specifiers:
       core: workspace:*
+      vue: ^3.2.47
     dependencies:
       core: link:../core
+      vue: 3.2.47
 
 packages:
 

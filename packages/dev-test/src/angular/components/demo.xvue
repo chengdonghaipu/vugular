@@ -1,6 +1,6 @@
 import {Component, Inject, InjectionToken, Optional, SkipSelf} from 'vue-plus';
 import {ref} from "vue";
-import type {LifecycleHook} from "vue-plus/dist";
+import type {LifecycleHook} from "vue-plus";
 import CommunityIcon from './IconCommunity.vue'
 import {Injectable} from 'vue-plus';
 
