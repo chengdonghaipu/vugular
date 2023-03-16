@@ -36,6 +36,9 @@ const distPkg = {
             "require": "./esm2020/index.cjs"
         }
     },
+    files: [
+      "dist/"
+    ],
     sideEffects: false,
     repository: pkg.repository,
     keywords: pkg.keywords,

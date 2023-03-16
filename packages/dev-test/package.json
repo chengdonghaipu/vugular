@@ -15,7 +15,8 @@
   "dependencies": {
     "pinia": "^2.0.32",
     "vue": "^3.2.47",
-    "vue-router": "^4.1.6"
+    "vue-router": "^4.1.6",
+    "plugin-vue-plus": "workspace:*"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",

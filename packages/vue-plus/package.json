@@ -13,6 +13,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "core": "^1.0.0"
+    "core": "workspace:*"
   }
 }
