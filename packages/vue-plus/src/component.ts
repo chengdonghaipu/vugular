@@ -1,5 +1,4 @@
-import type { ComponentPublicInstance, InjectionKey } from 'vue';
-import type { ReactiveEffect, TrackOpTypes, TriggerOpTypes } from 'vue';
+import type { ComponentPublicInstance, InjectionKey, ReactiveEffect, TrackOpTypes, TriggerOpTypes } from 'vue';
 
 export interface Type<T> extends Function {
   new (...args: any[]): T;
@@ -8,16 +7,18 @@ export interface Type<T> extends Function {
 export interface TypeDecorator {
   <T extends Type<any>>(type: T): T;
 
-  (target: Object, propertyKey?: string | symbol, parameterIndex?: number): void;
+  (target: { [k: string]: any }, propertyKey?: string | symbol, parameterIndex?: number): void;
 }
 
 export interface ComponentDecorator {
   (obj: Component): TypeDecorator;
+
   new (obj: Component): Component;
 }
 
 export interface InjectDecorator {
   (token: any): any;
+
   new (token: any): any;
 }
 
@@ -37,6 +38,7 @@ type DebuggerRenderEvent = {
   oldValue?: any;
   oldTarget?: Map<any, any> | Set<any>;
 };
+
 export interface LifecycleHook {
   onMounted?(): void;
 
@@ -66,6 +68,7 @@ export interface LifecycleHook {
 export function InjectionToken<T = any>(desc?: string): InjectionKey<T> {
   return Symbol(desc);
 }
+
 export interface ValueSansProvider {
   useValue: any;
 }
@@ -94,6 +97,7 @@ export type FactoryProvider<T = any> = {
 };
 
 export type Provider = TypeProvider | ValueProvider | ClassProvider | FactoryProvider;
+
 export interface Component {
   templateUrl?: string;
   template?: string;

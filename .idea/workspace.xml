@@ -5,20 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="df8ed6dc-b462-4206-ae2e-5bad0d60f9be" name="变更" comment="">
-      <change afterPath="$PROJECT_DIR$/.eslintrc.cjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.eslintrc.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.eslintrc.cjs" beforeDir="false" afterPath="$PROJECT_DIR$/.eslintrc.cjs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/plugin-vue-plus/src/compiler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/plugin-vue-plus/src/compiler.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/plugin-vue-plus/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/plugin-vue-plus/src/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/plugin-vue-plus/src/parse.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/plugin-vue-plus/src/parse.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/vue-plus/src/component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/vue-plus/src/component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/vue-plus/src/di.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/vue-plus/src/di.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript File" />
+      </list>
+    </option>
   </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="xh5oa2il" />
@@ -107,7 +112,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1678973162348</updated>
-      <workItem from="1678973163563" duration="2306000" />
+      <workItem from="1678973163563" duration="5399000" />
     </task>
     <servers />
   </component>

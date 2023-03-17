@@ -218,6 +218,7 @@ export const rootInjector = Injector.create({
   providers: [],
 });
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 window.__rootInjector__ = rootInjector;
 
