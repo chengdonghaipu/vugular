@@ -1,79 +1,88 @@
-import {Component, Inject, InjectionToken, Optional, SkipSelf} from 'vue-plus';
-import {ref} from "vue";
-import type {LifecycleHook} from "vue-plus";
-import CommunityIcon from './IconCommunity.vue'
-import {Injectable} from 'vue-plus';
+import { Component, Inject, InjectionToken, Optional, SkipSelf } from "vue-plus";
+import { ref } from "vue";
+import type { LifecycleHook } from "vue-plus";
+import CommunityIcon from "./IconCommunity.vue";
+import { Injectable } from "vue-plus";
 
 
 @Injectable()
 class RootClassK {
 
-    public update() {
+  public update() {
 
-    }
+  }
 
-    private pMethod() {}
+  private pMethod() {
+  }
 }
 
 @Injectable()
 class RootClassK2 {
 
-    public update() {
+  public update() {
 
-    }
+  }
 
-    constructor(public root: RootClassK) {
-        console.log(root);
-    }
+  constructor(public root: RootClassK) {
+    console.log(root);
+  }
 
-    private pMethod() {}
+  private pMethod() {
+  }
 }
 
 class ClassK {
 
-    public update() {
+  public update() {
 
-    }
+  }
 
-    private pMethod() {}
+  private pMethod() {
+  }
 }
-const demoToken = InjectionToken<ClassK>()
+
+const demoToken = InjectionToken<ClassK>();
 
 @Component({
-    styleUrls: ['./demo.less'],
-    components: [
-        CommunityIcon
-    ],
-    template: `
-      <div>{{x}}</div>
-      <div>{{y}}</div>
-      <CommunityIcon></CommunityIcon>
-    `,
-    providers: [
-        {provide: demoToken, useClass: ClassK},
-    ]
+  styleUrls: ["./demo.less"],
+  components: [
+    CommunityIcon
+  ],
+  template: `
+    <div>{{ x }}</div>
+    <div>{{ y }}</div>
+    <CommunityIcon></CommunityIcon>
+  `,
+  providers: [
+    { provide: demoToken, useClass: ClassK }
+  ]
 })
 export default class AngularDemo implements LifecycleHook {
-    x = ref(0)
-    y = ref(0)
+  x = ref(0);
+  y = ref(0);
 
-    private update = (event: MouseEvent) => {
-        this.x.value = event.x
-        this.y.value = event.y
-    }
+  props = defineProps({
+    k: {}
+  });
 
-    constructor(@Optional() @Inject(demoToken) public demoData: ClassK, @Optional() private root: RootClassK2) {
-        console.log(demoData, root);
-    }
+  private update = (event: MouseEvent) => {
+    this.x.value = event.x;
+    this.y.value = event.y;
+  };
 
-    private pMethod() {}
+  constructor(@Optional() @Inject(demoToken) public demoData: ClassK, @Optional() private root: RootClassK2) {
+    console.log(demoData, root);
+  }
 
-    onMounted(): void {
-        console.log(this.demoData);
-        window.addEventListener('mousemove', this.update)
-    }
+  private pMethod() {
+  }
 
-    onUnmounted(): void {
-        window.removeEventListener('mousemove', this.update)
-    }
+  onMounted(): void {
+    console.log(this.demoData);
+    window.addEventListener("mousemove", this.update);
+  }
+
+  onUnmounted(): void {
+    window.removeEventListener("mousemove", this.update);
+  }
 }

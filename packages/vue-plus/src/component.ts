@@ -8,6 +8,7 @@ export interface Type<T> extends Function {
 export interface TypeDecorator {
   <T extends Type<any>>(type: T): T;
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   (target: Object, propertyKey?: string | symbol, parameterIndex?: number): void;
 }
 
@@ -75,7 +76,7 @@ export declare interface ValueProvider extends ValueSansProvider {
   multi?: boolean;
 }
 
-export interface TypeProvider extends Type<any> {}
+export type TypeProvider = Type<any>;
 
 export declare interface ClassSansProvider {
   useClass: Type<any>;
@@ -105,6 +106,7 @@ export interface Component {
 }
 
 export function Ref(): PropertyDecorator {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   return function () {};
 }
 
