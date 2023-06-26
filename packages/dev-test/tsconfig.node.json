@@ -10,9 +10,11 @@
   "compilerOptions": {
     "composite": true,
     "types": ["node"],
-    "plugin-vue-plus": [
-      "../plugin-vue-plus/src/index.ts",
-      "../plugin-vue-plus/dist"
-    ]
+    "paths": {
+      "plugin-vue-plus": [
+        "../plugin-vue-plus/src/index.ts",
+        "../plugin-vue-plus/dist"
+      ]
+    }
   }
 }

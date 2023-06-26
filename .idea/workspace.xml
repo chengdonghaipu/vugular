@@ -4,21 +4,39 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="df8ed6dc-b462-4206-ae2e-5bad0d60f9be" name="变更" comment="">
-      <change afterPath="$PROJECT_DIR$/.eslintrc.cjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.eslintrc.js" beforeDir="false" />
+    <list default="true" id="df8ed6dc-b462-4206-ae2e-5bad0d60f9be" name="变更" comment="perf(dev-text): 例子">
+      <change afterPath="$PROJECT_DIR$/packages/dev-test/src/angular/components/model.xvue.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/vue-plus/src/const.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/vue-plus/src/output.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/vue-plus/src/view.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/dev-test/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/src/App.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/dev-test/src/angular/components/demo.xvue" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/src/angular/components/demo.xvue.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/dev-test/src/components/HelloWorld.vue" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/src/components/HelloWorld.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/dev-test/src/components/TheWelcome.vue" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/src/components/TheWelcome.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/dev-test/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/dev-test/tsconfig.node.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/tsconfig.node.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/dev-test/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/vite.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/plugin-vue-plus/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/plugin-vue-plus/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/plugin-vue-plus/src/compiler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/plugin-vue-plus/src/compiler.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/plugin-vue-plus/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/plugin-vue-plus/src/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/plugin-vue-plus/src/parse.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/plugin-vue-plus/src/parse.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/vue-plus/src/component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/vue-plus/src/component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/vue-plus/src/di.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/vue-plus/src/di.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/vue-plus/src/input.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/vue-plus/src/input.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Vue Single File Component" />
+        <option value="TypeScript File" />
+      </list>
+    </option>
   </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="xh5oa2il" />
@@ -37,6 +55,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/project/web/vue-plus&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -45,11 +64,14 @@
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
     &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/jiabinbin/myself/open_source/vue-plus/node_modules/prettier&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/Users/jiabinbin/myself/open_source/vue-plus/node_modules/typescript/lib&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;E:\\project\\web\\vue-plus\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="npm.clean">
+  <component name="RunManager" selected="npm.dev:test">
+    <configuration name="test.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/test.js" working-dir="$PROJECT_DIR$">
+      <method v="2" />
+    </configuration>
     <configuration name="build:plugin-vue-plus" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
@@ -87,13 +109,15 @@
         <script value="dev:test" />
       </scripts>
       <node-interpreter value="project" />
+      <package-manager value="npm" />
       <envs />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="npm.clean" />
         <item itemvalue="npm.dev:test" />
+        <item itemvalue="Node.js.test.js" />
+        <item itemvalue="npm.clean" />
         <item itemvalue="npm.build:plugin-vue-plus" />
         <item itemvalue="npm.build:vue-plus" />
       </list>
@@ -108,10 +132,59 @@
       <option name="presentableId" value="Default" />
       <updated>1678973162348</updated>
       <workItem from="1678973163563" duration="2306000" />
+      <workItem from="1681192525124" duration="1186000" />
+      <workItem from="1681302318261" duration="1075000" />
+      <workItem from="1681539241844" duration="1431000" />
+      <workItem from="1682510378266" duration="1187000" />
+      <workItem from="1682573746584" duration="1186000" />
+      <workItem from="1682604208577" duration="598000" />
+      <workItem from="1682687151122" duration="535000" />
+      <workItem from="1682754662008" duration="593000" />
+      <workItem from="1682837172005" duration="592000" />
+      <workItem from="1683356176119" duration="1190000" />
+      <workItem from="1683696391586" duration="1187000" />
+      <workItem from="1684253503547" duration="707000" />
+      <workItem from="1684599387221" duration="593000" />
+      <workItem from="1684643263496" duration="594000" />
+      <workItem from="1684690217012" duration="597000" />
+      <workItem from="1684748912392" duration="591000" />
+      <workItem from="1684769216434" duration="593000" />
+      <workItem from="1684845221222" duration="299000" />
+      <workItem from="1684921722560" duration="592000" />
+      <workItem from="1685601774898" duration="1730000" />
+      <workItem from="1685684596208" duration="593000" />
+      <workItem from="1686327822606" duration="1756000" />
+      <workItem from="1686381455306" duration="3319000" />
+      <workItem from="1686460904926" duration="1523000" />
+      <workItem from="1686464853339" duration="9574000" />
+      <workItem from="1686541597671" duration="2563000" />
+      <workItem from="1686558869986" duration="630000" />
+      <workItem from="1686646368248" duration="1187000" />
+      <workItem from="1686735395782" duration="12672000" />
+      <workItem from="1686801969474" duration="404000" />
+      <workItem from="1686895025275" duration="1205000" />
+      <workItem from="1687415868312" duration="37459000" />
     </task>
+    <task id="LOCAL-00001" summary="perf(dev-text): 例子">
+      <created>1679817384935</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1679817384935</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/test.js" />
+      </list>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="perf(dev-text): 例子" />
+    <option name="LAST_COMMIT_MESSAGE" value="perf(dev-text): 例子" />
   </component>
 </project>

@@ -5,11 +5,19 @@ defineProps<{
   msg: string
 }>()
 const x= ref(0)
+function messageChange(f) {
+  // console.log(f);
+}
+const child = ref(null)
+onMounted(() => {
+  // child.value 是 <Child /> 组件的实例
+  // console.log(child);
+})
 </script>
 
 <template>
   <div class="greetings">
-    <AngularDemo></AngularDemo>
+    <AngularDemo ref="child" :message="'hello'" @message-change="messageChange"></AngularDemo>
 <!--    <h1 class="green">{{ msg }}</h1>-->
 <!--    <h3>-->
 <!--      You’ve successfully created a project with-->

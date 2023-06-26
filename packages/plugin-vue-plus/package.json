@@ -11,5 +11,8 @@
   },
   "keywords": [],
   "author": "vue-plus",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@vue/compiler-dom": "3.2.47"
+  }
 }

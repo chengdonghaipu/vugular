@@ -1,6 +1,7 @@
 import type { ComponentPublicInstance, InjectionKey } from 'vue';
 import type { ClassProvider, FactoryProvider, Provider, Type, TypeProvider, ValueProvider } from './component';
 import { getCurrentInstance } from 'vue';
+import { NATIVE } from "./const";
 
 type InjectFlags = number;
 
@@ -249,7 +250,7 @@ export function attachInjectableInjector(target: Type<any>) {
 
 export function attachInjector(target: Type<any>) {
   const { proxy } = getCurrentInstance() || {};
-
+  console.log(proxy);
   const parentInjector = getParentInjector(proxy as any);
 
   const injector = new Injector(parentInjector);
@@ -270,7 +271,7 @@ export function attachInjector(target: Type<any>) {
   // console.log(proxy);
 
   if (!propertyDescriptor) {
-    return new target();
+    return Object.assign(new target(), { [NATIVE]: proxy });
   } else {
     const paramTypes = propertyDescriptor.value.paramTypes as any[];
 
@@ -282,6 +283,29 @@ export function attachInjector(target: Type<any>) {
       return injector.get(paramType.token, null, paramType.injectOptions);
     });
 
-    return new target(...dependency);
+    const t = new target(...dependency);
+    console.log("target");
+    const outputs = propertyDescriptor.value.outputs as any[];
+    const inputs = propertyDescriptor.value.inputs as any[];
+    const models = propertyDescriptor.value.models as any[];
+
+    if (outputs.length) {
+      outputs.forEach(v => {
+        delete t[v.name]
+      })
+    }
+    if (inputs.length) {
+      inputs.forEach(v => {
+        // delete t[v.name]
+      })
+    }
+    if (models.length) {
+      models.forEach(v => {
+        delete t[v.name]
+      })
+    }
+
+    t[NATIVE] = proxy;
+    return t;
   }
 }

@@ -7,7 +7,7 @@ import CommunityIcon from './icons/IconCommunity.vue'
 import SupportIcon from './icons/IconSupport.vue'
 </script>
 
-<template>
+<template>1
 <!--  <WelcomeItem>-->
 <!--    <template #icon>-->
 <!--      <DocumentationIcon />-->

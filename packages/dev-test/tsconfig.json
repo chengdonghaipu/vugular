@@ -7,6 +7,8 @@
     "useDefineForClassFields": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "target": "es5",
     "paths": {
       "@/*": ["./src/*"],
       "vue-plus": [
@@ -16,6 +18,10 @@
       "vue-plus/*": [
         "../vue-plus/src/*",
         "../vue-plus/dist/*"
+      ],
+      "plugin-vue-plus": [
+        "../plugin-vue-plus/src/index.ts",
+        "../plugin-vue-plus/dist"
       ]
     }
   },

@@ -2,12 +2,12 @@ import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { angularPlugin } from "plugin-vue-plus/src";
+import { angularPlugin } from "../plugin-vue-plus/src";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [angularPlugin(), vue({
-    include: /\.x?vue$/
+    include: /(\.vue$)|(\.xvue.ts$)/,
   })],
   resolve: {
     alias: {

@@ -8,7 +8,7 @@ importers:
       '@typescript-eslint/eslint-plugin': ^5.55.0
       '@typescript-eslint/parser': ^5.55.0
       eslint: ^8.36.0
-      eslint-config-prettier: 8.0.0
+      eslint-config-prettier: ^8.7.0
       eslint-plugin-prettier: ^4.2.1
       prettier: ^2.8.4
       rimraf: ^4.4.0
@@ -25,8 +25,8 @@ importers:
       '@typescript-eslint/eslint-plugin': 5.55.0_342y7v4tc7ytrrysmit6jo4wri
       '@typescript-eslint/parser': 5.55.0_vgl77cfdswitgr47lm5swmv43m
       eslint: 8.36.0
-      eslint-config-prettier: 8.0.0_eslint@8.36.0
-      eslint-plugin-prettier: 4.2.1_57kjnmaltjdvpoakas4ggcnnhi
+      eslint-config-prettier: 8.7.0_eslint@8.36.0
+      eslint-plugin-prettier: 4.2.1_eqzx3hpkgx5nnvxls3azrcc7dm
       prettier: 2.8.4
       rimraf: 4.4.0
       rollup: 3.19.1
@@ -82,7 +82,10 @@ importers:
       vue-tsc: 1.2.0_typescript@4.8.4
 
   packages/plugin-vue-plus:
-    specifiers: {}
+    specifiers:
+      '@vue/compiler-dom': 3.2.47
+    dependencies:
+      '@vue/compiler-dom': 3.2.47
 
   packages/vue-plus:
     specifiers:
@@ -1235,15 +1238,6 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /eslint-config-prettier/8.0.0_eslint@8.36.0:
-    resolution: {integrity: sha512-5EaAVPsIHu+grmm5WKjxUia4yHgRrbkd8I0ffqUSwixCPMVBrbS97UnzlEY/Q7OWo584vgixefM0kJnUfo/VjA==}
-    hasBin: true
-    peerDependencies:
-      eslint: '>=7.0.0'
-    dependencies:
-      eslint: 8.36.0
-    dev: true
-
   /eslint-config-prettier/8.7.0_eslint@8.36.0:
     resolution: {integrity: sha512-HHVXLSlVUhMSmyW4ZzEuvjpwqamgmlfkutD53cYXLikh4pt/modINRcCIApJ84czDxM4GZInwUrromsDdTImTA==}
     hasBin: true
@@ -1251,23 +1245,6 @@ packages:
       eslint: '>=7.0.0'
     dependencies:
       eslint: 8.36.0
-    dev: true
-
-  /eslint-plugin-prettier/4.2.1_57kjnmaltjdvpoakas4ggcnnhi:
-    resolution: {integrity: sha512-f/0rXLXUt0oFYs8ra4w49wYZBG5GKZpAYsJSm6rnYL5uVDjd+zowwMwVZHnAjf4edNrKpCDYfXDgmRE/Ak7QyQ==}
-    engines: {node: '>=12.0.0'}
-    peerDependencies:
-      eslint: '>=7.28.0'
-      eslint-config-prettier: '*'
-      prettier: '>=2.0.0'
-    peerDependenciesMeta:
-      eslint-config-prettier:
-        optional: true
-    dependencies:
-      eslint: 8.36.0
-      eslint-config-prettier: 8.0.0_eslint@8.36.0
-      prettier: 2.8.4
-      prettier-linter-helpers: 1.0.0
     dev: true
 
   /eslint-plugin-prettier/4.2.1_eqzx3hpkgx5nnvxls3azrcc7dm:

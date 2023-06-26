@@ -1,36 +1,37 @@
-import {Compiler} from "./compiler";
+import { Compiler } from './compiler';
 
 export function angularPlugin() {
-    const componentFileRegex = /\.(xvue)$/
-    const injectableFileRegex = /\.(ts)$/
-    return {
-        name: 'angular-plugin',
-        async transform(code: string, id: string) {
-            if (componentFileRegex.test(id)) {
-                const newCode = new Compiler(code).generate(id)
+  const componentFileRegex = /\.(xvue\.ts)$/;
+  const injectableFileRegex = /\.(ts)$/;
+  return {
+    name: 'angular-plugin',
+    async transform(code: string, id: string) {
+      if (componentFileRegex.test(id)) {
+        console.log(code);
+        const newCode = new Compiler(id).generate(id);
 
-                // console.log(newCode);
+        // console.log(newCode);
 
-                return {
-                    code: newCode,
-                    // map: sourceMap.toString()
-                }
-            } else if (injectableFileRegex.test(id)) {
-                if (!code.includes('@Injectable')) {
-                    return
-                }
-
-                const newCode = new Compiler(code).generate(id)
-
-                if (!newCode) {
-                    return
-                }
-
-                return {
-                    code: newCode,
-                    // map: sourceMap.toString()
-                }
-            }
+        return {
+          code: newCode,
+          // map: sourceMap.toString()
+        };
+      } else if (injectableFileRegex.test(id)) {
+        if (!code.includes('@Injectable')) {
+          return;
         }
-    }
+
+        const newCode = new Compiler(code).generate(id);
+
+        if (!newCode) {
+          return;
+        }
+
+        return {
+          code: newCode,
+          // map: sourceMap.toString()
+        };
+      }
+    },
+  };
 }
