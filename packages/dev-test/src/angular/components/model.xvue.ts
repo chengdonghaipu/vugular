@@ -16,7 +16,7 @@ import { EventEmitter, Model, ModelMetaEmitter, ModelModifiers, ModelParams, Out
   `,
 })
 export default class AngularChild implements LifecycleHook {
-  f?: string;
+  f!: string;
   @Model() model!: string;
   @Model('param') modelParams!: string;
   // @Model() modelModifiers!: ModelMetaEmitter<string>;

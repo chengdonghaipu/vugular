@@ -96,6 +96,8 @@ const demoToken = InjectionToken<ClassK>();
     <ModelDemo v-model:param="param" v-model="model" ref="childRef"></ModelDemo>
     <div>{{model}}</div>
     <div>{{param}}</div>
+    <div>{{testProxy}}</div>
+    <div>{{testGetter}}</div>
     <AngularTest></AngularTest>
   `,
   providers: [
@@ -107,6 +109,7 @@ export default class AngularDemo extends HookReturns<ReturnType<typeof useMouse>
   // y = ref(0);
   param = ref("param");
   model = ref("model");
+  testProxy = 'testProxy'
   @ViewChildren() itemRefs?: HTMLDivElement[];
   @ViewChild() childRef?: AngularChild;
   @Input() readonly message!: string;
@@ -118,6 +121,18 @@ export default class AngularDemo extends HookReturns<ReturnType<typeof useMouse>
   @Watch<AngularDemo>(context => context.y.value)
   xChange(newX: number) {
     console.log(`x is ${newX}`)
+  }
+
+  get testGetter() {
+    return this.param.value
+  }
+
+  set testGetter(value) {
+    this.param.value = value
+  }
+
+  constructor() {
+    super();
   }
   modelChange = (v: any) => {
     console.log('modelChange', v);
@@ -135,6 +150,10 @@ export default class AngularDemo extends HookReturns<ReturnType<typeof useMouse>
     console.log(this.itemRefs);
     console.log('this.childRef.value!.model');
     console.log(this.childRef?.model);
+
+    setInterval(() => {
+      this.testProxy += '1';
+    }, 1000)
   }
 
   onUnmounted(): void {

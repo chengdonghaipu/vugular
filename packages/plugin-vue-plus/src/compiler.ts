@@ -1,10 +1,11 @@
 import * as ts from "typescript";
-import { CallExpression, NamedImports, StringLiteral } from "typescript";
+import { CallExpression, ConstructorDeclaration, NamedImports, StringLiteral } from "typescript";
 import path from "path";
 import { readFileSync } from "fs";
 import * as fs from "fs";
 import { parse as vueTemplateParse, RootNode, TemplateChildNode } from "@vue/compiler-dom";
 import MagicString from 'magic-string';
+import { reactive } from "vue";
 
 const lifecycleHook = [
   "onMounted",
@@ -38,7 +39,7 @@ function getStyle(template: string, lang: string) {
 export class Compiler {
   private readonly ms: MagicString;
   private readonly sourceFile!: ts.SourceFile;
-  properties: { name: string; value: string }[] = [];
+  properties: { name: string; value: string, needReactive: boolean }[] = [];
   methods: { name: string; params: any }[] = [];
   lifecycleHook: { name: string; params: any }[] = [];
   vueDepends: string[] = [];
@@ -56,6 +57,13 @@ export class Compiler {
   providers: any[] = [];
   needInjectableInjector = false;
   inputs: any[] = [];
+  accessor: {
+    getter: { start: number; end: number; body: string; name: string }[];
+    setter: { start: number; end: number; body: string; name: string }[];
+  } = {
+    getter: [],
+    setter: []
+  };
   views: any[] = [];
   outputs: any[] = [];
   models: any[] = [];
@@ -314,7 +322,7 @@ export class Compiler {
 
     const propertyName = node.name.getText();
     const propertyValue = node.initializer?.getText() ?? "undefined";
-    this.properties.push({ name: propertyName, value: propertyValue });
+    this.properties.push({ name: propertyName, value: propertyValue, needReactive: false });
 
     if (meta.props.length) {
       return [meta];
@@ -351,7 +359,7 @@ export class Compiler {
 
     const propertyName = node.name.getText();
     const propertyValue = node.initializer?.getText() ?? "undefined";
-    this.properties.push({ name: propertyName, value: propertyValue });
+    this.properties.push({ name: propertyName, value: propertyValue, needReactive: false });
 
     return [meta];
   }
@@ -385,7 +393,7 @@ export class Compiler {
 
     const propertyName = node.name.getText();
     const propertyValue = node.initializer?.getText() ?? "undefined";
-    this.properties.push({ name: propertyName, value: propertyValue });
+    this.properties.push({ name: propertyName, value: propertyValue, needReactive: false });
 
     return [meta];
   }
@@ -433,7 +441,7 @@ export class Compiler {
     // }
     const propertyName = node.name.getText();
     const propertyValue = node.initializer?.getText() ?? "undefined";
-    this.properties.push({ name: propertyName, value: propertyValue });
+    this.properties.push({ name: propertyName, value: propertyValue, needReactive: false });
     return [meta];
   }
 
@@ -441,7 +449,32 @@ export class Compiler {
     if (!ts.isClassDeclaration(node)) {
       return;
     }
+    
+    const isExtends = (node.heritageClauses || []).find((value) => value.getText().includes('extends'));
     this.componentName = node.name!.getText();
+    // reactiveProxy
+    const constructorNode = node.members.find(v => v.kind === ts.SyntaxKind.Constructor) as ConstructorDeclaration;
+
+    if (constructorNode) {
+      this.updateMeta.push({
+        start: constructorNode.body!.statements.end,
+        end: constructorNode.body!.statements.end,
+        action: "add",
+        insertText: '\n    return reactiveProxy.apply(this)'
+      });
+    } else {
+      this.updateMeta.push({
+        start: node.members.end,
+        end: node.members.end,
+        action: "add",
+        insertText: `
+        constructor() {
+    ${isExtends ? 'super();' : ''}
+    return reactiveProxy.apply(this)
+  }`
+      });
+    }
+    const newSourceCode = this.sourceFile.getText();
     for (const member of node.members) {
       if (ts.isPropertyDeclaration(member)) {
         this.inputs = [...this.inputs, ...this.parseInputs(member)];
@@ -456,7 +489,11 @@ export class Compiler {
 
         const propertyName = member.name.getText();
         const propertyValue = member.initializer?.getText() ?? "undefined";
-        this.properties.push({ name: propertyName, value: propertyValue });
+        this.properties.push({
+          name: propertyName,
+          value: propertyValue,
+          needReactive: !propertyValue.startsWith("ref(") && member.initializer?.kind !== ts.SyntaxKind.ArrowFunction
+        });
       } else if (ts.isMethodDeclaration(member)) {
         if (
           !(!member.modifiers || member.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.PublicKeyword))
@@ -484,7 +521,63 @@ export class Compiler {
         }
       } else if (ts.isConstructorDeclaration(member)) {
         this.paramTypes = this.parseParamTypes(member.parameters);
+      } else if (ts.isGetAccessor(member)) {
+        const start = member.body!.statements.pos;
+        const end = member.body!.statements.end;
+        const body = newSourceCode.slice(start, end)
+        this.accessor.getter.push({
+          start: member.pos,
+          end: member.end,
+          body,
+          name: member.name.getText()
+        })
+      } else if (ts.isSetAccessor(member)) {
+        const start = member.body!.statements.pos;
+        const end = member.body!.statements.end;
+        const body = newSourceCode.slice(start, end)
+        this.accessor.setter.push({
+          start: member.pos,
+          end: member.end,
+          body,
+          name: member.name.getText()
+        })
       }
+    }
+
+    const { getter, setter } = this.accessor;
+
+    for (const getterElement of getter) {
+      const isExistSetter = setter.find(v => v.name === getterElement.name);
+      const { start, end, name, body } = getterElement;
+      if (!isExistSetter) {
+        this.updateMeta.push({
+          start,
+          end,
+          action: "update",
+          insertText: `${name} = computed(() => {${body}})`
+        });
+        continue
+      }
+
+      // del set block
+      this.updateMeta.push({
+        start: isExistSetter.start,
+        end: isExistSetter.end,
+        action: "del",
+        // insertText: `${name} = computed(() => ${body})`
+      });
+
+      this.updateMeta.push({
+        start,
+        end,
+        action: "update",
+        insertText: `${name} = computed({
+  get: () => {${body}},
+  set: (value: any) => {
+    ${isExistSetter.body}
+  }
+})`
+      });
     }
 
     const decorators = ts.canHaveDecorators(node) ? ts.getDecorators(node) : undefined;
@@ -510,7 +603,8 @@ export class Compiler {
         this.updateMeta.push({
           start,
           end,
-          action: "del"
+          action: "del",
+          // insertText: '@ReactiveProxy()'
         });
       } else {
         console.error(`Failed to find @Component decorator options in "${sourceCode}"`);
@@ -752,6 +846,13 @@ export class Compiler {
         newSourceCode = tempCodes.join("");
         deleteCount -= end - start;
         this.ms.appendLeft(start, insertText)
+      } else if (action === "update") {
+        // console.log('start - deleteCount', start - deleteCount, insertText);
+        const tempCodes = newSourceCode.split("");
+        tempCodes.splice(start - deleteCount, end - start, insertText);
+        newSourceCode = tempCodes.join("");
+        deleteCount += insertText.length - (end - start);
+        this.ms.update(start, end, insertText)
       }
     });
 
@@ -822,6 +923,9 @@ export class Compiler {
     if (meta.views.length && !unDepImports.includes('ref') && !this.vueDepends.includes("ref")) {
       unDepImports.push('ref')
     }
+    if (this.accessor.getter.length && !unDepImports.includes('computed') && !this.vueDepends.includes("computed")) {
+      unDepImports.push('computed')
+    }
 
     if (!unDepImports.includes('watch') && !this.vueDepends.includes("watch")) {
       unDepImports.push('watch')
@@ -841,6 +945,9 @@ export class Compiler {
 
     if (!this.diDepends.includes("watchWrap")) {
       unImports.push("watchWrap");
+    }
+    if (!this.diDepends.includes("reactiveProxy")) {
+      unImports.push("reactiveProxy");
     }
 
     if (this.needInjectableInjector && !this.diDepends.includes("attachInjectableInjector")) {
@@ -902,6 +1009,7 @@ export class Compiler {
         inputs: ${JSON.stringify(meta.inputs)},
         models: ${JSON.stringify(meta.models)},
         scope: __vg_context__,
+        reactive: ${JSON.stringify(meta.properties.filter(v => v.needReactive).map(v => v.name))}
     },
     configurable: false,
     writable: false,
@@ -924,9 +1032,11 @@ export class Compiler {
 
   watch(watchWrapElement.sources, watchWrapElement.watchCallback, watchWrapElement.options);
 };`);
-      this.ms.append(`\nconst __vg_component__ = attachInjector(${componentName});`)
+      this.ms.append(`\nconst __vg_component__ = attachInjector(${componentName});console.log(__vg_component__);`)
       this.ms.append(`\nif (typeof (__vg_component__ as any).onSetup === "function") {
   const setupResult$$ = (__vg_component__ as any).onSetup.call(__vg_component__);
+  if (setupResult$$ instanceof Promise) {
+  }
   if (Object.prototype.toString.call(setupResult$$) === "[object Object]") {
       Object.assign(__vg_component__, setupResult$$)
   }
@@ -1003,7 +1113,9 @@ export class Compiler {
       hires: true,
       // includeContent: true
     });
+    console.log(this.properties);
     // console.log(`${this.finalSourceCode}`);
+
     return {
       code: this.ms.toString(),
       map

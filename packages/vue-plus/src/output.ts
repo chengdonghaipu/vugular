@@ -106,7 +106,7 @@ export function Model(params: string): PropertyDecorator;
 // export function Model(params: _ModelParams, modifiers: _ModelModifiers): PropertyDecorator;
 export function Model(p1?: any): PropertyDecorator {
   return function (target, propertyKey) {
-    const newKey = `$$NS__${propertyKey as string}__`;
+    // const newKey = `$$NS__${propertyKey as string}__`;
     let event = '';
     const props: string[] = [];
 
@@ -123,13 +123,13 @@ export function Model(p1?: any): PropertyDecorator {
         const native = this[NATIVE] as ComponentPublicInstance;
         const key = props[0];
         // const context = contextKeyMap.get(this);
-        console.log(native, key, (native.$props as Record<string, any>)[key]);
+        // console.log(native, key, (native.$props as Record<string, any>)[key]);
         // const value = context ? context[newKey] : undefined;
         // console.log('get11', (native.$props as Record<string, any>)[key] || value);
         return (native.$props as Record<string, any>)[key];
       },
       set(val) {
-        console.log('val', val);
+        // console.log('val', val);
         // console.log(val);
 
         const native = this[NATIVE] as ComponentPublicInstance;
