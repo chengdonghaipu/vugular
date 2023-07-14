@@ -40,6 +40,7 @@ type DebuggerRenderEvent = {
 };
 export interface LifecycleHook {
   onMounted?(): void;
+  onSetup?(): any;
 
   onUpdated?(): void;
 

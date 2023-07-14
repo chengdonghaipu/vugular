@@ -10,6 +10,7 @@
   "compilerOptions": {
     "composite": true,
     "types": ["node"],
+    "target": "ES2021",
     "paths": {
       "plugin-vue-plus": [
         "../plugin-vue-plus/src/index.ts",

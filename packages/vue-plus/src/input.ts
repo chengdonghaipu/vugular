@@ -12,7 +12,6 @@ export function Input(required: boolean): PropertyDecorator;
 export function Input(p?: any): PropertyDecorator {
   return function(target, propertyKey) {
     const newKey = `$$NS__${propertyKey as string}__`;
-    console.log("Input");
     // const native = this[NATIVE] as ComponentPublicInstance;
     Object.defineProperty(target, propertyKey, {
       get() {

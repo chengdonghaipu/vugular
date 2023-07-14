@@ -1,5 +1,5 @@
 import { NATIVE } from "./const";
-import { ComponentPublicInstance } from "vue";
+import { ComponentPublicInstance, ref } from "vue";
 
 const contextKeyMap: WeakMap<object, any> = new WeakMap();
 
@@ -35,21 +35,20 @@ export function Output(alias?: any): PropertyDecorator {
       },
       set(val) {
         const context = contextKeyMap.get(this) || contextKeyMap.set(this, {}).get(this);
+        const native = this[NATIVE] as ComponentPublicInstance;
 
-        if (context[newKey] === undefined) {
-          if (typeof val.cxt === "object") {
-            const native = this[NATIVE] as ComponentPublicInstance;
+        if (context[newKey] === undefined && native) {
 
-            val.cxt = val.cxt || {}
 
-            Object.assign(val.cxt, {
-              event: alias || propertyKey,
-              $emit: native.$emit.bind(native)
-            });
-          }
+          val.cxt = val.cxt || {}
+
+          Object.assign(val.cxt, {
+            event: alias || propertyKey,
+            $emit: native.$emit.bind(native)
+          });
           context[newKey] = val;
         } else {
-          throw new Error(`${propertyKey as string} 为只读属性 不允许修改!`);
+          // throw new Error(`${propertyKey as string} 为只读属性 不允许修改!`);
         }
       },
       enumerable: true,
@@ -123,14 +122,15 @@ export function Model(p1?: any): PropertyDecorator {
       get() {
         const native = this[NATIVE] as ComponentPublicInstance;
         const key = props[0];
-        const context = contextKeyMap.get(this);
-
-        const value = context ? context[newKey] : undefined;
-        console.log('get', (native.$props as Record<string, any>)[key] || value);
-        return (native.$props as Record<string, any>)[key] || value;
+        // const context = contextKeyMap.get(this);
+        console.log(native, key, (native.$props as Record<string, any>)[key]);
+        // const value = context ? context[newKey] : undefined;
+        // console.log('get11', (native.$props as Record<string, any>)[key] || value);
+        return (native.$props as Record<string, any>)[key];
       },
       set(val) {
-        console.log("ff", val);
+        console.log('val', val);
+        // console.log(val);
 
         const native = this[NATIVE] as ComponentPublicInstance;
 

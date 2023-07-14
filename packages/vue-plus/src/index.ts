@@ -1,2 +1,6 @@
 export * from './di'
 export * from './component'
+export * from './watch'
+export * from './view'
+export * from './input'
+export * from './output'

@@ -4,6 +4,7 @@ import path from "path";
 import { readFileSync } from "fs";
 import * as fs from "fs";
 import { parse as vueTemplateParse, RootNode, TemplateChildNode } from "@vue/compiler-dom";
+import MagicString from 'magic-string';
 
 const lifecycleHook = [
   "onMounted",
@@ -21,9 +22,7 @@ const lifecycleHook = [
 ];
 
 function getTemplate(template: string) {
-  return `
-    <template>${template}</template>
-    `;
+  return `<template>${template}</template>`;
 }
 
 function getScript(template: string) {
@@ -33,12 +32,11 @@ function getScript(template: string) {
 }
 
 function getStyle(template: string, lang: string) {
-  return `
-    <style scoped lang="${lang}">${template}</style>
-    `;
+  return `<style scoped lang="${lang}">${template}</style>`;
 }
 
 export class Compiler {
+  private readonly ms: MagicString;
   private readonly sourceFile!: ts.SourceFile;
   properties: { name: string; value: string }[] = [];
   methods: { name: string; params: any }[] = [];
@@ -58,6 +56,7 @@ export class Compiler {
   providers: any[] = [];
   needInjectableInjector = false;
   inputs: any[] = [];
+  views: any[] = [];
   outputs: any[] = [];
   models: any[] = [];
 
@@ -99,7 +98,8 @@ export class Compiler {
       needInjectableInjector: this.needInjectableInjector,
       inputs: this.inputs,
       outputs: this.outputs,
-      models: this.models
+      models: this.models,
+      views: this.views,
     };
   }
 
@@ -356,6 +356,40 @@ export class Compiler {
     return [meta];
   }
 
+  private parseViews(node: ts.PropertyDeclaration): any[] {
+    const decorators = ts.canHaveDecorators(node) ? ts.getDecorators(node) : null;
+
+    if (!decorators) {
+      return [];
+    }
+
+    const viewDecorator = decorators && Compiler.getDecorator(decorators, "ViewChild");
+    const viewsDecorator = decorators && Compiler.getDecorator(decorators, "ViewChildren");
+
+    if (!viewDecorator && !viewsDecorator) {
+      return [];
+    }
+
+    const meta = {
+      name: node.name.getText(),
+      alias: node.name.getText(),
+      views: !viewDecorator
+    };
+
+    // @ts-ignore
+    const [arg] = ((viewDecorator || viewsDecorator).expression as CallExpression).arguments;
+
+    if (arg && ts.SyntaxKind.StringLiteral === arg.kind) {
+      meta.alias = (arg as StringLiteral).text;
+    }
+
+    const propertyName = node.name.getText();
+    const propertyValue = node.initializer?.getText() ?? "undefined";
+    this.properties.push({ name: propertyName, value: propertyValue });
+
+    return [meta];
+  }
+
   private parseInputs(node: ts.PropertyDeclaration): any[] {
     const decorators = ts.canHaveDecorators(node) ? ts.getDecorators(node) : null;
 
@@ -411,6 +445,7 @@ export class Compiler {
     for (const member of node.members) {
       if (ts.isPropertyDeclaration(member)) {
         this.inputs = [...this.inputs, ...this.parseInputs(member)];
+        this.views = [...this.views, ...this.parseViews(member)];
         this.outputs = [...this.outputs, ...this.parseOutputs(member)];
         this.models = [...this.models, ...this.parseModels(member)];
         if (
@@ -543,6 +578,9 @@ export class Compiler {
   private forEachChild(node: RootNode | TemplateChildNode, callback: (node: TemplateChildNode) => void) {
     if ('children' in node && node.children && node.children?.length) {
       for (const child of node.children) {
+        // @ts-ignore
+        child.parent = node;
+        // @ts-ignore
         callback(child as TemplateChildNode);
         this.forEachChild(child as TemplateChildNode, callback);
       }
@@ -554,7 +592,20 @@ export class Compiler {
     const updateMeta: any[] = [];
 
     this.forEachChild(rootNode, (node: any) => {
-      const props = node.props;
+      const props = (node.props || []).sort((a, b) => {
+        if (a.name === 'for') {
+          return -1; // 将 a 排在 b 之前
+        } else if (b.name === 'for') {
+          return 1; // 将 b 排在 a 之前
+        }
+        return 0; // 保持原有顺序
+      });
+
+      node.templateVars = [];
+      const templateVars = node.templateVars;
+      if (node.parent) {
+        templateVars.push(...(node.parent.templateVars || []))
+      }
 
       if (props && props.length) {
         for (const prop of props) {
@@ -562,28 +613,89 @@ export class Compiler {
             const exp = prop.exp;
             const start = exp.loc.start.offset;
             const end = exp.loc.end.offset;
+
+            if (prop.name === "for") {
+              const regex = /(\w+)\s+in\s+/;
+              const str = exp.content;
+              const match = str.match(regex);
+              const item = match && match[1];
+              // console.log(exp.content, 'exp.content', item);
+              if (item) {
+                templateVars.push(item)
+                node.templateVars = templateVars;
+                // console.log(templateVars, 'itemfff');
+              }
+              continue;
+            }
+
+            if (prop.name === "bind") {
+              if (templateVars.find(v => v === exp.content)) {
+                continue;
+              }
+            }
+
+            if (prop.name !== "on") {
+              // ref 不转换
+              const exist = this.properties.find(v => v.name === exp.content && v.value && v.value.startsWith("ref("))
+              if (exist) {
+                continue;
+              }
+            }
+
             updateMeta.push({
               start,
               end,
               action: "update",
-              insertText: `$$component$$.${exp.content}`,
+              insertText: `__vg_component__.${exp.content}`,
               text: exp.content
             });
             continue;
+          } else if (prop.type === 6) {
+            const refValue = prop.value;
+
+            if (refValue && refValue.type === 2) {
+              const start = refValue.loc.start.offset + 1;
+              const end = refValue.loc.end.offset + 1;
+
+              const exist = this.views.find(v => v.alias === refValue.content)
+
+              if (!exist) {
+                continue;
+              }
+
+              updateMeta.push({
+                start,
+                end,
+                action: "update",
+                insertText: `__vg_${refValue.content}__`,
+                text: refValue.content + ''
+              });
+            }
           }
         }
       }
 
       if (node.type === 5) {
         const content = node.content;
-        if (content.type === 4) {
+        if (content.type === 4/* && content.content !== 'modelValue'*/) {
           const start = content.loc.start.offset;
           const end = content.loc.end.offset;
+
+          // ref 不转换
+          const exist = this.properties.find(v => v.name === content.content && v.value && v.value.startsWith("ref("))
+          if (exist) {
+            return;
+          }
+
+          if (templateVars.find(v => v === content.content)) {
+            return;
+          }
+
           updateMeta.push({
             start,
             end,
             action: "update",
-            insertText: `$$component$$.${content.content}`,
+            insertText: `__vg_component__.${content.content}`,
             text: content.content
           });
 
@@ -632,12 +744,14 @@ export class Compiler {
         const suffix = newSourceCode.slice(end - deleteCount);
         newSourceCode = prefix + " " + suffix;
         deleteCount += end - start - 1;
+        this.ms.remove(start, end)
       } else if (action === "add") {
         // console.log('start - deleteCount', start - deleteCount, insertText);
         const tempCodes = newSourceCode.split("");
         tempCodes.splice(start - deleteCount, 0, insertText);
         newSourceCode = tempCodes.join("");
         deleteCount -= end - start;
+        this.ms.appendLeft(start, insertText)
       }
     });
 
@@ -645,10 +759,11 @@ export class Compiler {
 
     this.parseTemplate(this.meta.template);
 
-    console.log(this.meta);
+    // console.log(this.meta);
   }
 
-  generate(id: string): string {
+  generate() {
+    const id = this.id
     const newSourceCode = this.newSourceCode;
     const meta = this.meta;
     const { templateUrl, template, styles, styleUrls, lifecycleHook, providers, paramTypes, componentName } = meta;
@@ -704,9 +819,18 @@ export class Compiler {
       });
     }
 
+    if (meta.views.length && !unDepImports.includes('ref') && !this.vueDepends.includes("ref")) {
+      unDepImports.push('ref')
+    }
+
+    if (!unDepImports.includes('watch') && !this.vueDepends.includes("watch")) {
+      unDepImports.push('watch')
+    }
+
     if (unDepImports.length) {
       // console.log(unDepImports);
       finalScript.unshift(`\nimport { ${unDepImports.join(", ")} } from 'vue';`);
+      // this.ms.prepend(`\nimport { ${unDepImports.join(", ")} } from 'vue';`)
     }
 
     const unImports = [];
@@ -715,12 +839,31 @@ export class Compiler {
       unImports.push("attachInjector");
     }
 
+    if (!this.diDepends.includes("watchWrap")) {
+      unImports.push("watchWrap");
+    }
+
     if (this.needInjectableInjector && !this.diDepends.includes("attachInjectableInjector")) {
       unImports.push("attachInjectableInjector");
     }
 
     if (unImports.length) {
       finalScript.unshift(`\nimport { ${unImports.join(", ")} } from 'vue-plus';`);
+      // this.ms.prepend(`\nimport { ${unImports.join(", ")} } from 'vue-plus';`)
+    }
+
+    finalScript.push(`const __vg_context__: any = {};`)
+
+    if (meta.views.length || meta.views.length) {
+      meta.views.forEach(v => {
+        if (v.views) {
+          finalScript.push(`\nconst __vg_${v.alias}__ = ref([]);`);
+          finalScript.push(`\n__vg_context__['__vg_${v.alias}__'] = __vg_${v.alias}__`);
+        } else {
+          finalScript.push(`\nconst __vg_${v.alias}__ = ref(null);`);
+          finalScript.push(`\n__vg_context__['__vg_${v.alias}__'] = __vg_${v.alias}__`);
+        }
+      });
     }
 
     if (meta.inputs.length || meta.models.length) {
@@ -729,7 +872,8 @@ export class Compiler {
         .map((v) => v.alias)
         .concat(meta.models.filter((v) => v.props.length).map((v) => v.props[0]));
       if (propsList.length) {
-        finalScript.push(`\nconst $props$ = defineProps(${JSON.stringify(propsList)});`);
+        finalScript.push(`\nconst __vg_props__ = defineProps(${JSON.stringify(propsList)});`);
+        finalScript.push(`\n__vg_context__['props'] = __vg_props__;`);
       }
     }
     if (meta.outputs.length || meta.models.length) {
@@ -738,11 +882,13 @@ export class Compiler {
         .map((v) => v.alias)
         .concat(meta.models.filter((v) => v.emit).map((v) => v.emit));
       if (propsList.length) {
-        finalScript.push(`\nconst $emits$ = defineEmits(${JSON.stringify(propsList)});`);
+        finalScript.push(`\nconst __vg_emits__ = defineEmits(${JSON.stringify(propsList)});`);
+        finalScript.push(`\n__vg_context__['emits'] = __vg_emits__;\n`);
       }
     }
 
     if (newSourceCode) {
+      this.ms.prepend(finalScript.join(''))
       finalScript.push(`\n${newSourceCode}`);
     }
 
@@ -754,14 +900,70 @@ export class Compiler {
         paramTypes: [${paramTypes.join(",")}],
         outputs: ${JSON.stringify(meta.outputs)},
         inputs: ${JSON.stringify(meta.inputs)},
-        models: ${JSON.stringify(meta.models)}
+        models: ${JSON.stringify(meta.models)},
     },
     configurable: false,
     writable: false,
     enumerable: false
 });`);
+    this.ms.append(`\nObject.defineProperty(${componentName}, '__decorator__', {
+    value: {
+        providers: [
+            ${providers.join(",")}
+        ],
+        paramTypes: [${paramTypes.join(",")}],
+        outputs: ${JSON.stringify(meta.outputs)},
+        inputs: ${JSON.stringify(meta.inputs)},
+        models: ${JSON.stringify(meta.models)},
+    },
+    configurable: false,
+    writable: false,
+    enumerable: false
+});`)
     if (componentName) {
-      finalScript.push(`\nconst $$component$$ = attachInjector(${componentName});`);
+      finalScript.push(`\nconst __vg_component__ = attachInjector(${componentName});`);
+      finalScript.push(`\nif (typeof (__vg_component__ as any).onSetup === "function") {
+  const setupResult$$ = (__vg_component__ as any).onSetup.call(__vg_component__);
+  if (Object.prototype.toString.call(setupResult$$) === "[object Object]") {
+      Object.assign(__vg_component__, setupResult$$)
+  }
+};`);
+      finalScript.push(`\nfor (const watchWrapElement of watchWrap(__vg_component__)) {
+  if (!watchWrapElement) {
+    continue;
+  }
+
+  watch(watchWrapElement.sources, watchWrapElement.watchCallback, watchWrapElement.options);
+};`);
+      this.ms.append(`\nconst __vg_component__ = attachInjector(${componentName});`)
+      this.ms.append(`\nif (typeof (__vg_component__ as any).onSetup === "function") {
+  const setupResult$$ = (__vg_component__ as any).onSetup.call(__vg_component__);
+  if (Object.prototype.toString.call(setupResult$$) === "[object Object]") {
+      Object.assign(__vg_component__, setupResult$$)
+  }
+};`)
+      this.ms.append(`\nfor (const watchWrapElement of watchWrap(__vg_component__)) {
+  if (!watchWrapElement) {
+    continue;
+  }
+
+  watch(watchWrapElement.sources, watchWrapElement.watchCallback, watchWrapElement.options);
+};`)
+      if (meta.views.length || meta.views.length) {
+        const temp = `\nconst views: Record<string, any> = {};
+${JSON.stringify(meta.views)}.forEach(v => {
+          views['__vg_' + v.alias + '__'] = () => __vg_context__['__vg_' + v.alias + '__'];
+})
+
+Reflect.set(__vg_component__, "VIEWS", views);console.log(__vg_context__)`
+        finalScript.push(temp);
+        // const views: Record<string, any> = {}
+        // meta.views.forEach(v => {
+        //   views[`$V_${v.alias}$`] = () => $V_${v.alias}$;
+        // });
+        // Reflect.set(__vg_component__, "VIEWS", views)
+        this.ms.append(temp)
+      }
     }
     if (meta.inputs.length) {
       // const propsList = meta.inputs
@@ -776,7 +978,7 @@ export class Compiler {
       //   finalScript.push(
       //     `\n${JSON.stringify(
       //       propsList
-      //     )}.filter(v => $props$[v.alias] !== undefined).forEach(v => $$component$$[v.name]=$props$[v.alias]);`
+      //     )}.filter(v => $props$[v.alias] !== undefined).forEach(v => __vg_component__[v.name]=$props$[v.alias]);`
       //   );
       // }
     }
@@ -799,13 +1001,16 @@ export class Compiler {
     }
 
     if (exposed.length) {
-      finalScript.push(`\nconst { ${exposed.join(", ")} } = $$component$$;`);
-      const defineExposes = meta.methods.map((v) => v.name).concat(meta.properties.map((v) => v.name));
-      finalScript.push(`\ndefineExpose({${defineExposes.join(", ")}});`);
+      this.ms.append(`\nconst { ${exposed.join(", ")} } = __vg_component__;`)
+      this.ms.append(`\ndefineExpose(__vg_component__);`)
+      finalScript.push(`\nconst { ${exposed.join(", ")} } = __vg_component__;`);
+      // const defineExposes = meta.methods.map((v) => v.name).concat(meta.properties.map((v) => v.name));
+      finalScript.push(`\ndefineExpose(__vg_component__);`);
     }
 
     lifecycleHook.forEach((value: { name: string }) => {
-      finalScript.push(`\n${value.name}($$${value.name}.bind($$component$$));`);
+      finalScript.push(`\n${value.name}($$${value.name}.bind(__vg_component__));`);
+      this.ms.append(`\n${value.name}($$${value.name}.bind(__vg_component__));`)
     });
 
     // console.log(template);
@@ -814,13 +1019,26 @@ export class Compiler {
       finalStyles.join(""),
       cssLessType
     )}\n`;
-
-    console.log(`${this.finalSourceCode}`);
-    return this.finalSourceCode;
+    this.ms.prepend(`${getTemplate(template)} \n <script setup lang="ts">\n`)
+    this.ms.append(`</script>\n ${getStyle(
+      finalStyles.join(""),
+      cssLessType
+    )}\n`)
+    const map = this.ms.generateMap({
+      source: this.id,
+      hires: true,
+      // includeContent: true
+    });
+    // console.log(`${this.finalSourceCode}`);
+    return {
+      code: this.ms.toString(),
+      map
+    }
   }
 
-  constructor(public id: string) {
-    const code = fs.readFileSync(id).toString();
+  constructor(public id: string, public originCode: string) {
+    const code = originCode;
+    this.ms = new MagicString(code);
     this.sourceFile = ts.createSourceFile("example.ts", code, ts.ScriptTarget.Latest, true);
     this.parse();
   }

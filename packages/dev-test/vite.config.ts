@@ -9,6 +9,9 @@ export default defineConfig({
   plugins: [angularPlugin(), vue({
     include: /(\.vue$)|(\.xvue.ts$)/,
   })],
+  esbuild: {
+    exclude: /(\.xvue.ts$)/
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

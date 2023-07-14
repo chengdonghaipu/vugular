@@ -286,25 +286,25 @@ export function attachInjector(target: Type<any>) {
 
     const t = new target(...dependency);
     console.log("target");
-    const outputs = propertyDescriptor.value.outputs as any[];
-    const inputs = propertyDescriptor.value.inputs as any[];
-    const models = propertyDescriptor.value.models as any[];
+    // const outputs = propertyDescriptor.value.outputs as any[];
+    // const inputs = propertyDescriptor.value.inputs as any[];
+    // const models = propertyDescriptor.value.models as any[];
 
-    if (outputs.length) {
-      outputs.forEach(v => {
-        delete t[v.name]
-      })
-    }
-    if (inputs.length) {
-      inputs.forEach(v => {
-        // delete t[v.name]
-      })
-    }
-    if (models.length) {
-      models.forEach(v => {
-        delete t[v.name]
-      })
-    }
+    // if (outputs.length) {
+    //   outputs.forEach(v => {
+    //     delete t[v.name]
+    //   })
+    // }
+    // if (inputs.length) {
+    //   inputs.forEach(v => {
+    //     // delete t[v.name]
+    //   })
+    // }
+    // if (models.length) {
+    //   models.forEach(v => {
+    //     delete t[v.name]
+    //   })
+    // }
 
     t[NATIVE] = proxy;
     return t;

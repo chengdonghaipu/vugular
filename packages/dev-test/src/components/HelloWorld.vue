@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import AngularDemo from '../angular/components/demo.xvue'
 import {onMounted, ref} from "vue";
+import CustomInput from './CustomInput.vue'
+import Test1 from './Test1.vue'
+import Test2 from './Test2.vue'
 defineProps<{
   msg: string
 }>()
@@ -8,15 +11,19 @@ const x= ref(0)
 function messageChange(f) {
   // console.log(f);
 }
-const child = ref(null)
+const message = ref('hello')
 onMounted(() => {
   // child.value 是 <Child /> 组件的实例
   // console.log(child);
+  console.log(222);
 })
 </script>
 
 <template>
   <div class="greetings">
+<!--    <CustomInput v-model="message" /> {{ message }}-->
+    <!--    <Test1 v-model="message" /> {{ message }}-->
+<!--    <Test2/>-->
     <AngularDemo ref="child" :message="'hello'" @message-change="messageChange"></AngularDemo>
 <!--    <h1 class="green">{{ msg }}</h1>-->
 <!--    <h3>-->
