@@ -4,32 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="df8ed6dc-b462-4206-ae2e-5bad0d60f9be" name="变更" comment="perf(dev-text): 例子">
-      <change afterPath="$PROJECT_DIR$/packages/vue-plus/src/hooks.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/vue-plus/src/watch.ts" afterDir="false" />
+    <list default="true" id="df8ed6dc-b462-4206-ae2e-5bad0d60f9be" name="变更" comment="perf(core): sourcemap正确工作">
+      <change afterPath="$PROJECT_DIR$/packages/vue-plus/src/context.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/dev-test/src/angular/components/demo.xvue.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/src/angular/components/demo.xvue.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/dev-test/src/components/HelloWorld.vue" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/src/components/HelloWorld.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/dev-test/src/views/HomeView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/src/views/HomeView.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/dev-test/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/tsconfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/dev-test/tsconfig.node.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/tsconfig.node.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/dev-test/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/vite.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/plugin-vue-plus/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/plugin-vue-plus/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/plugin-vue-plus/src/compiler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/plugin-vue-plus/src/compiler.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/plugin-vue-plus/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/plugin-vue-plus/src/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/vue-plus/src/component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/vue-plus/src/component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/vue-plus/src/const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/vue-plus/src/const.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/vue-plus/src/di.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/vue-plus/src/di.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/vue-plus/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/vue-plus/src/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/vue-plus/src/input.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/vue-plus/src/input.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/vue-plus/src/output.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/vue-plus/src/output.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/vue-plus/src/view.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/vue-plus/src/view.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+    </option>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -180,7 +172,7 @@
       <workItem from="1688366760832" duration="46039000" />
       <workItem from="1688536792358" duration="23191000" />
       <workItem from="1688797748474" duration="597000" />
-      <workItem from="1689303092749" duration="17770000" />
+      <workItem from="1689303092749" duration="21922000" />
     </task>
     <task id="LOCAL-00001" summary="perf(dev-text): 例子">
       <created>1679817384935</created>
@@ -196,7 +188,14 @@
       <option name="project" value="LOCAL" />
       <updated>1687764928524</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="perf(core): sourcemap正确工作">
+      <created>1689333125113</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1689333125113</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -219,7 +218,10 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="perf(dev-text): 例子" />
-    <option name="LAST_COMMIT_MESSAGE" value="perf(dev-text): 例子" />
+    <MESSAGE value="perf(core): sourcemap正确工作" />
+    <option name="LAST_COMMIT_MESSAGE" value="perf(core): sourcemap正确工作" />
   </component>
 </project>

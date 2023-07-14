@@ -251,7 +251,7 @@ export function attachInjectableInjector(target: Type<any>) {
 
 export function attachInjector(target: Type<any>) {
   const { proxy } = getCurrentInstance() || {};
-  console.log(proxy);
+
   const parentInjector = getParentInjector(proxy as any);
 
   const injector = new Injector(parentInjector);
@@ -285,7 +285,6 @@ export function attachInjector(target: Type<any>) {
     });
 
     const t = new target(...dependency);
-    console.log("target");
     // const outputs = propertyDescriptor.value.outputs as any[];
     // const inputs = propertyDescriptor.value.inputs as any[];
     // const models = propertyDescriptor.value.models as any[];

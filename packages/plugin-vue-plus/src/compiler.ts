@@ -858,10 +858,10 @@ export class Compiler {
       meta.views.forEach(v => {
         if (v.views) {
           finalScript.push(`\nconst __vg_${v.alias}__ = ref([]);`);
-          finalScript.push(`\n__vg_context__['__vg_${v.alias}__'] = __vg_${v.alias}__`);
+          finalScript.push(`\n__vg_context__['${v.alias}'] = __vg_${v.alias}__`);
         } else {
           finalScript.push(`\nconst __vg_${v.alias}__ = ref(null);`);
-          finalScript.push(`\n__vg_context__['__vg_${v.alias}__'] = __vg_${v.alias}__`);
+          finalScript.push(`\n__vg_context__['${v.alias}'] = __vg_${v.alias}__`);
         }
       });
     }
@@ -892,7 +892,7 @@ export class Compiler {
       finalScript.push(`\n${newSourceCode}`);
     }
 
-    finalScript.push(`\nObject.defineProperty(${componentName}, '__decorator__', {
+    const defineTemp = `\nObject.defineProperty(${componentName}, '__decorator__', {
     value: {
         providers: [
             ${providers.join(",")}
@@ -901,25 +901,14 @@ export class Compiler {
         outputs: ${JSON.stringify(meta.outputs)},
         inputs: ${JSON.stringify(meta.inputs)},
         models: ${JSON.stringify(meta.models)},
+        scope: __vg_context__,
     },
     configurable: false,
     writable: false,
     enumerable: false
-});`);
-    this.ms.append(`\nObject.defineProperty(${componentName}, '__decorator__', {
-    value: {
-        providers: [
-            ${providers.join(",")}
-        ],
-        paramTypes: [${paramTypes.join(",")}],
-        outputs: ${JSON.stringify(meta.outputs)},
-        inputs: ${JSON.stringify(meta.inputs)},
-        models: ${JSON.stringify(meta.models)},
-    },
-    configurable: false,
-    writable: false,
-    enumerable: false
-});`)
+});`
+    finalScript.push(defineTemp);
+    this.ms.append(defineTemp);
     if (componentName) {
       finalScript.push(`\nconst __vg_component__ = attachInjector(${componentName});`);
       finalScript.push(`\nif (typeof (__vg_component__ as any).onSetup === "function") {
@@ -949,21 +938,6 @@ export class Compiler {
 
   watch(watchWrapElement.sources, watchWrapElement.watchCallback, watchWrapElement.options);
 };`)
-      if (meta.views.length || meta.views.length) {
-        const temp = `\nconst views: Record<string, any> = {};
-${JSON.stringify(meta.views)}.forEach(v => {
-          views['__vg_' + v.alias + '__'] = () => __vg_context__['__vg_' + v.alias + '__'];
-})
-
-Reflect.set(__vg_component__, "VIEWS", views);console.log(__vg_context__)`
-        finalScript.push(temp);
-        // const views: Record<string, any> = {}
-        // meta.views.forEach(v => {
-        //   views[`$V_${v.alias}$`] = () => $V_${v.alias}$;
-        // });
-        // Reflect.set(__vg_component__, "VIEWS", views)
-        this.ms.append(temp)
-      }
     }
     if (meta.inputs.length) {
       // const propsList = meta.inputs

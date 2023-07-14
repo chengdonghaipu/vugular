@@ -9,9 +9,14 @@ function views(selector?: string) {
 
     Object.defineProperty(target, propertyKey, {
       get(): any {
-        const views = Reflect.get(this, 'VIEWS');
-        const refFn = views && views[`__vg_${selector!}__`];
-        const value = refFn && refFn();
+        const propertyDescriptor = Object.getOwnPropertyDescriptor(target.constructor, '__decorator__');
+        const property = propertyDescriptor?.value;
+
+        if (!property) {
+          return property
+        }
+        const scope = property.scope;
+        const value = scope && scope[selector!];
         // if (value instanceof RefImpl) {
         //
         // }
