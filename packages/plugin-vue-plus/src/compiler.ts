@@ -526,8 +526,8 @@ export class Compiler {
         const end = member.body!.statements.end;
         const body = newSourceCode.slice(start, end)
         this.accessor.getter.push({
-          start: member.pos,
-          end: member.end,
+          start: start,
+          end: end,
           body,
           name: member.name.getText()
         })
@@ -554,7 +554,7 @@ export class Compiler {
           start,
           end,
           action: "update",
-          insertText: `${name} = computed(() => {${body}})`
+          insertText: `\n    // eslint-disable-next-line @typescript-eslint/ban-ts-comment\n    // @ts-ignore\n    return this.__vg_accessor_computed__${name}.value`
         });
         continue
       }
@@ -563,20 +563,19 @@ export class Compiler {
       this.updateMeta.push({
         start: isExistSetter.start,
         end: isExistSetter.end,
-        action: "del",
-        // insertText: `${name} = computed(() => ${body})`
+        action: "update",
+        insertText: `\n  set ${isExistSetter.name}(value) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this.__vg_accessor_computed__testGetter.value = value
+  }`
       });
 
       this.updateMeta.push({
         start,
         end,
         action: "update",
-        insertText: `${name} = computed({
-  get: () => {${body}},
-  set: (value: any) => {
-    ${isExistSetter.body}
-  }
-})`
+        insertText: `\n    // eslint-disable-next-line @typescript-eslint/ban-ts-comment\n    // @ts-ignore\n    return this.__vg_accessor_computed__${name}.value`
       });
     }
 
@@ -923,9 +922,9 @@ export class Compiler {
     if (meta.views.length && !unDepImports.includes('ref') && !this.vueDepends.includes("ref")) {
       unDepImports.push('ref')
     }
-    if (this.accessor.getter.length && !unDepImports.includes('computed') && !this.vueDepends.includes("computed")) {
-      unDepImports.push('computed')
-    }
+    // if (this.accessor.getter.length && !unDepImports.includes('computed') && !this.vueDepends.includes("computed")) {
+    //   unDepImports.push('computed')
+    // }
 
     if (!unDepImports.includes('watch') && !this.vueDepends.includes("watch")) {
       unDepImports.push('watch')
@@ -999,6 +998,32 @@ export class Compiler {
       finalScript.push(`\n${newSourceCode}`);
     }
 
+    const accessor = this.accessor;
+    function accessorString() {
+      const { getter, setter } = accessor;
+      const tempGetter = getter.map(v => {
+        return {
+          name: v.name,
+          body: `function() {
+    ${v.body}   
+}`
+        }
+      })
+      const tempSetter = setter.map(v => {
+        return {
+          name: v.name,
+          body: `function() {
+    ${v.body}   
+}`
+        }
+      })
+
+      return JSON.stringify({
+        getter: tempGetter,
+        setter: tempSetter,
+      })
+    }
+
     const defineTemp = `\nObject.defineProperty(${componentName}, '__decorator__', {
     value: {
         providers: [
@@ -1009,7 +1034,8 @@ export class Compiler {
         inputs: ${JSON.stringify(meta.inputs)},
         models: ${JSON.stringify(meta.models)},
         scope: __vg_context__,
-        reactive: ${JSON.stringify(meta.properties.filter(v => v.needReactive).map(v => v.name))}
+        reactive: ${JSON.stringify(meta.properties.filter(v => v.needReactive).map(v => v.name))},
+        accessor: ${accessorString()}
     },
     configurable: false,
     writable: false,
