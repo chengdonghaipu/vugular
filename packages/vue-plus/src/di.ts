@@ -2,6 +2,7 @@ import type { ComponentPublicInstance, InjectionKey } from 'vue';
 import type { ClassProvider, FactoryProvider, Provider, Type, TypeProvider, ValueProvider } from './component';
 import { getCurrentInstance } from 'vue';
 import { NATIVE } from "./const";
+import { useRoute, useRouter } from "vue-router";
 
 type InjectFlags = number;
 
@@ -278,6 +279,16 @@ export function attachInjector(target: Type<any>) {
 
     const dependency = paramTypes.map((paramType) => {
       if (!paramType.token) {
+        if (paramType === "vg_Router") {
+          const router = useRouter();
+
+          return router;
+        }
+        if (paramType === "vg_Route") {
+          const route = useRoute();
+
+          return route;
+        }
         return injector.get(paramType, null);
       }
 

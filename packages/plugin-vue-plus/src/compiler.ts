@@ -4,7 +4,7 @@ import path from "path";
 import { readFileSync } from "fs";
 import * as fs from "fs";
 import { parse as vueTemplateParse, RootNode, TemplateChildNode } from "@vue/compiler-dom";
-import MagicString from 'magic-string';
+import MagicString from "magic-string";
 import { reactive } from "vue";
 
 const lifecycleHook = [
@@ -53,6 +53,7 @@ export class Compiler {
   newSourceCode = "";
   finalSourceCode = "";
   styleUrls: string[] = [];
+  dependencies: { dep: string; export: string; originExport: string }[] = [];
   styles: string[] = [];
   providers: any[] = [];
   needInjectableInjector = false;
@@ -107,7 +108,7 @@ export class Compiler {
       inputs: this.inputs,
       outputs: this.outputs,
       models: this.models,
-      views: this.views,
+      views: this.views
     };
   }
 
@@ -125,11 +126,29 @@ export class Compiler {
 
       const text = statement.moduleSpecifier.getText().replace(/"|'/g, "");
 
+      const namedBindings = statement.importClause?.namedBindings as NamedImports;
+
+      if (namedBindings) {
+        namedBindings.elements.forEach((element) => {
+          this.dependencies.push({
+            dep: text,
+            export: element.name.escapedText as string,
+            originExport: element.propertyName ? (element.propertyName?.escapedText as string) : ""
+          });
+        });
+      } else if (statement.importClause?.name) {
+        this.dependencies.push({
+          dep: text,
+          export: statement.importClause?.name.escapedText as string,
+          originExport: ""
+        });
+      }
+
+
       if (!dep.includes(text)) {
         continue;
       }
 
-      const namedBindings = statement.importClause?.namedBindings as NamedImports;
 
       if (!namedBindings) {
         continue;
@@ -149,6 +168,26 @@ export class Compiler {
         const decorators = ts.canHaveDecorators(param) ? ts.getDecorators(param) : undefined;
 
         if (!decorators) {
+          const type = param.type!.getText();
+
+          const dep = this.dependencies.find(v => v.export === type);
+
+          if (
+            dep &&
+            dep.dep === 'vue-router' &&
+            (dep.originExport === 'Router' || (!dep.originExport && dep.export === 'Router'))
+          ) {
+            return "'vg_Router'";
+          }
+
+          if (
+            dep &&
+            dep.dep === 'vue-plus' &&
+            (dep.originExport === 'Route' || (!dep.originExport && dep.export === 'Route'))
+          ) {
+            return "'vg_Route'";
+          }
+
           return param.type!.getText();
         }
 
@@ -449,8 +488,8 @@ export class Compiler {
     if (!ts.isClassDeclaration(node)) {
       return;
     }
-    
-    const isExtends = (node.heritageClauses || []).find((value) => value.getText().includes('extends'));
+
+    const isExtends = (node.heritageClauses || []).find((value) => value.getText().includes("extends"));
     this.componentName = node.name!.getText();
     // reactiveProxy
     const constructorNode = node.members.find(v => v.kind === ts.SyntaxKind.Constructor) as ConstructorDeclaration;
@@ -460,7 +499,7 @@ export class Compiler {
         start: constructorNode.body!.statements.end,
         end: constructorNode.body!.statements.end,
         action: "add",
-        insertText: '\n    return reactiveProxy.apply(this)'
+        insertText: "\n    return reactiveProxy.apply(this)"
       });
     } else {
       this.updateMeta.push({
@@ -469,7 +508,7 @@ export class Compiler {
         action: "add",
         insertText: `
         constructor() {
-    ${isExtends ? 'super();' : ''}
+    ${isExtends ? "super();" : ""}
     return reactiveProxy.apply(this)
   }`
       });
@@ -524,23 +563,23 @@ export class Compiler {
       } else if (ts.isGetAccessor(member)) {
         const start = member.body!.statements.pos;
         const end = member.body!.statements.end;
-        const body = newSourceCode.slice(start, end)
+        const body = newSourceCode.slice(start, end);
         this.accessor.getter.push({
           start: start,
           end: end,
           body,
           name: member.name.getText()
-        })
+        });
       } else if (ts.isSetAccessor(member)) {
         const start = member.body!.statements.pos;
         const end = member.body!.statements.end;
-        const body = newSourceCode.slice(start, end)
+        const body = newSourceCode.slice(start, end);
         this.accessor.setter.push({
           start: member.pos,
           end: member.end,
           body,
           name: member.name.getText()
-        })
+        });
       }
     }
 
@@ -556,7 +595,7 @@ export class Compiler {
           action: "update",
           insertText: `\n    // eslint-disable-next-line @typescript-eslint/ban-ts-comment\n    // @ts-ignore\n    return this.__vg_accessor_computed__${name}.value`
         });
-        continue
+        continue;
       }
 
       // del set block
@@ -602,7 +641,7 @@ export class Compiler {
         this.updateMeta.push({
           start,
           end,
-          action: "del",
+          action: "del"
           // insertText: '@ReactiveProxy()'
         });
       } else {
@@ -669,7 +708,7 @@ export class Compiler {
   }
 
   private forEachChild(node: RootNode | TemplateChildNode, callback: (node: TemplateChildNode) => void) {
-    if ('children' in node && node.children && node.children?.length) {
+    if ("children" in node && node.children && node.children?.length) {
       for (const child of node.children) {
         // @ts-ignore
         child.parent = node;
@@ -686,9 +725,9 @@ export class Compiler {
 
     this.forEachChild(rootNode, (node: any) => {
       const props = (node.props || []).sort((a, b) => {
-        if (a.name === 'for') {
+        if (a.name === "for") {
           return -1; // 将 a 排在 b 之前
-        } else if (b.name === 'for') {
+        } else if (b.name === "for") {
           return 1; // 将 b 排在 a 之前
         }
         return 0; // 保持原有顺序
@@ -697,7 +736,7 @@ export class Compiler {
       node.templateVars = [];
       const templateVars = node.templateVars;
       if (node.parent) {
-        templateVars.push(...(node.parent.templateVars || []))
+        templateVars.push(...(node.parent.templateVars || []));
       }
 
       if (props && props.length) {
@@ -714,7 +753,7 @@ export class Compiler {
               const item = match && match[1];
               // console.log(exp.content, 'exp.content', item);
               if (item) {
-                templateVars.push(item)
+                templateVars.push(item);
                 node.templateVars = templateVars;
                 // console.log(templateVars, 'itemfff');
               }
@@ -729,7 +768,7 @@ export class Compiler {
 
             if (prop.name !== "on") {
               // ref 不转换
-              const exist = this.properties.find(v => v.name === exp.content && v.value && v.value.startsWith("ref("))
+              const exist = this.properties.find(v => v.name === exp.content && v.value && v.value.startsWith("ref("));
               if (exist) {
                 continue;
               }
@@ -750,7 +789,7 @@ export class Compiler {
               const start = refValue.loc.start.offset + 1;
               const end = refValue.loc.end.offset + 1;
 
-              const exist = this.views.find(v => v.alias === refValue.content)
+              const exist = this.views.find(v => v.alias === refValue.content);
 
               if (!exist) {
                 continue;
@@ -761,7 +800,7 @@ export class Compiler {
                 end,
                 action: "update",
                 insertText: `__vg_${refValue.content}__`,
-                text: refValue.content + ''
+                text: refValue.content + ""
               });
             }
           }
@@ -775,7 +814,7 @@ export class Compiler {
           const end = content.loc.end.offset;
 
           // ref 不转换
-          const exist = this.properties.find(v => v.name === content.content && v.value && v.value.startsWith("ref("))
+          const exist = this.properties.find(v => v.name === content.content && v.value && v.value.startsWith("ref("));
           if (exist) {
             return;
           }
@@ -837,21 +876,21 @@ export class Compiler {
         const suffix = newSourceCode.slice(end - deleteCount);
         newSourceCode = prefix + " " + suffix;
         deleteCount += end - start - 1;
-        this.ms.remove(start, end)
+        this.ms.remove(start, end);
       } else if (action === "add") {
         // console.log('start - deleteCount', start - deleteCount, insertText);
         const tempCodes = newSourceCode.split("");
         tempCodes.splice(start - deleteCount, 0, insertText);
         newSourceCode = tempCodes.join("");
         deleteCount -= end - start;
-        this.ms.appendLeft(start, insertText)
+        this.ms.appendLeft(start, insertText);
       } else if (action === "update") {
         // console.log('start - deleteCount', start - deleteCount, insertText);
         const tempCodes = newSourceCode.split("");
         tempCodes.splice(start - deleteCount, end - start, insertText);
         newSourceCode = tempCodes.join("");
         deleteCount += insertText.length - (end - start);
-        this.ms.update(start, end, insertText)
+        this.ms.update(start, end, insertText);
       }
     });
 
@@ -863,7 +902,7 @@ export class Compiler {
   }
 
   generate() {
-    const id = this.id
+    const id = this.id;
     const newSourceCode = this.newSourceCode;
     const meta = this.meta;
     const { templateUrl, template, styles, styleUrls, lifecycleHook, providers, paramTypes, componentName } = meta;
@@ -919,15 +958,15 @@ export class Compiler {
       });
     }
 
-    if (meta.views.length && !unDepImports.includes('ref') && !this.vueDepends.includes("ref")) {
-      unDepImports.push('ref')
+    if (meta.views.length && !unDepImports.includes("ref") && !this.vueDepends.includes("ref")) {
+      unDepImports.push("ref");
     }
     // if (this.accessor.getter.length && !unDepImports.includes('computed') && !this.vueDepends.includes("computed")) {
     //   unDepImports.push('computed')
     // }
 
-    if (!unDepImports.includes('watch') && !this.vueDepends.includes("watch")) {
-      unDepImports.push('watch')
+    if (!unDepImports.includes("watch") && !this.vueDepends.includes("watch")) {
+      unDepImports.push("watch");
     }
 
     if (unDepImports.length) {
@@ -958,7 +997,7 @@ export class Compiler {
       // this.ms.prepend(`\nimport { ${unImports.join(", ")} } from 'vue-plus';`)
     }
 
-    finalScript.push(`const __vg_context__: any = {};`)
+    finalScript.push(`const __vg_context__: any = {};`);
 
     if (meta.views.length || meta.views.length) {
       meta.views.forEach(v => {
@@ -994,11 +1033,12 @@ export class Compiler {
     }
 
     if (newSourceCode) {
-      this.ms.prepend(finalScript.join(''))
+      this.ms.prepend(finalScript.join(""));
       finalScript.push(`\n${newSourceCode}`);
     }
 
     const accessor = this.accessor;
+
     function accessorString() {
       const { getter, setter } = accessor;
       const tempGetter = getter.map(v => {
@@ -1007,21 +1047,21 @@ export class Compiler {
           body: `function() {
     ${v.body}   
 }`
-        }
-      })
+        };
+      });
       const tempSetter = setter.map(v => {
         return {
           name: v.name,
           body: `function() {
     ${v.body}   
 }`
-        }
-      })
+        };
+      });
 
       return JSON.stringify({
         getter: tempGetter,
-        setter: tempSetter,
-      })
+        setter: tempSetter
+      });
     }
 
     const defineTemp = `\nObject.defineProperty(${componentName}, '__decorator__', {
@@ -1040,7 +1080,7 @@ export class Compiler {
     configurable: false,
     writable: false,
     enumerable: false
-});`
+});`;
     finalScript.push(defineTemp);
     this.ms.append(defineTemp);
     if (componentName) {
@@ -1058,7 +1098,7 @@ export class Compiler {
 
   watch(watchWrapElement.sources, watchWrapElement.watchCallback, watchWrapElement.options);
 };`);
-      this.ms.append(`\nconst __vg_component__ = attachInjector(${componentName});console.log(__vg_component__);`)
+      this.ms.append(`\nconst __vg_component__ = attachInjector(${componentName});console.log(__vg_component__);`);
       this.ms.append(`\nif (typeof (__vg_component__ as any).onSetup === "function") {
   const setupResult$$ = (__vg_component__ as any).onSetup.call(__vg_component__);
   if (setupResult$$ instanceof Promise) {
@@ -1066,14 +1106,14 @@ export class Compiler {
   if (Object.prototype.toString.call(setupResult$$) === "[object Object]") {
       Object.assign(__vg_component__, setupResult$$)
   }
-};`)
+};`);
       this.ms.append(`\nfor (const watchWrapElement of watchWrap(__vg_component__)) {
   if (!watchWrapElement) {
     continue;
   }
 
   watch(watchWrapElement.sources, watchWrapElement.watchCallback, watchWrapElement.options);
-};`)
+};`);
     }
     if (meta.inputs.length) {
       // const propsList = meta.inputs
@@ -1111,8 +1151,8 @@ export class Compiler {
     }
 
     if (exposed.length) {
-      this.ms.append(`\nconst { ${exposed.join(", ")} } = __vg_component__;`)
-      this.ms.append(`\ndefineExpose(__vg_component__);`)
+      this.ms.append(`\nconst { ${exposed.join(", ")} } = __vg_component__;`);
+      this.ms.append(`\ndefineExpose(__vg_component__);`);
       finalScript.push(`\nconst { ${exposed.join(", ")} } = __vg_component__;`);
       // const defineExposes = meta.methods.map((v) => v.name).concat(meta.properties.map((v) => v.name));
       finalScript.push(`\ndefineExpose(__vg_component__);`);
@@ -1120,7 +1160,7 @@ export class Compiler {
 
     lifecycleHook.forEach((value: { name: string }) => {
       finalScript.push(`\n${value.name}($$${value.name}.bind(__vg_component__));`);
-      this.ms.append(`\n${value.name}($$${value.name}.bind(__vg_component__));`)
+      this.ms.append(`\n${value.name}($$${value.name}.bind(__vg_component__));`);
     });
 
     // console.log(template);
@@ -1129,14 +1169,14 @@ export class Compiler {
       finalStyles.join(""),
       cssLessType
     )}\n`;
-    this.ms.prepend(`${getTemplate(template)} \n <script setup lang="ts">\n`)
+    this.ms.prepend(`${getTemplate(template)} \n <script setup lang="ts">\n`);
     this.ms.append(`</script>\n ${getStyle(
       finalStyles.join(""),
       cssLessType
-    )}\n`)
+    )}\n`);
     const map = this.ms.generateMap({
       source: this.id,
-      hires: true,
+      hires: true
       // includeContent: true
     });
     console.log(this.properties);
@@ -1145,7 +1185,7 @@ export class Compiler {
     return {
       code: this.ms.toString(),
       map
-    }
+    };
   }
 
   constructor(public id: string, public originCode: string) {

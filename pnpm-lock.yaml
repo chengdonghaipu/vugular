@@ -103,9 +103,11 @@ importers:
     specifiers:
       core: workspace:*
       vue: ^3.2.47
+      vue-router: ^4.1.6
     dependencies:
       core: link:../core
       vue: 3.2.47
+      vue-router: 4.1.6_vue@3.2.47
 
 packages:
 

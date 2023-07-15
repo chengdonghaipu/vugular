@@ -1,4 +1,6 @@
 import { Component, Inject, InjectionToken, Optional, SkipSelf } from "vue-plus";
+import type {Router} from 'vue-router'
+import type { Route } from 'vue-plus'
 import { onMounted, onUnmounted, ref } from "vue";
 import type { LifecycleHook } from "vue-plus";
 import type { Ref } from "vue";
@@ -131,8 +133,16 @@ export default class AngularDemo extends HookReturns<ReturnType<typeof useMouse>
     this.param.value = value
   }
 
-  constructor() {
+  constructor(public router: Router, public route: Route) {
     super();
+    console.log(router);
+    console.log(route);
+    setTimeout(() => console.log(route.name), 3000)
+    // router.push({
+    //   name: '',
+    //   query: {}
+    // })
+    // const router = useRouter()
   }
   modelChange = (v: any) => {
     console.log('modelChange', v);
