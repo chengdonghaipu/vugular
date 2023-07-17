@@ -18,6 +18,10 @@
         "../vue-plus/src/*",
         "../vue-plus/dist/*"
       ],
+      "@vugular/store": [
+        "../store/src/index.ts",
+        "../store/dist"
+      ],
       "plugin-vue-plus": [
         "../plugin-vue-plus/src/index.ts",
         "../plugin-vue-plus/dist"
