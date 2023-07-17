@@ -1,5 +1,5 @@
 import { Component, Inject, InjectionToken, Optional, SkipSelf } from "vue-plus";
-import type {Router} from 'vue-router'
+import type { NavigationGuardNext, RouteLocationNormalized, Router } from "vue-router";
 import type { Route } from 'vue-plus'
 import { onMounted, onUnmounted, ref } from "vue";
 import type { LifecycleHook } from "vue-plus";
@@ -13,7 +13,8 @@ import AngularChild from "./model.xvue.ts.vue";
 import { ViewChild, ViewChildren } from "vue-plus/view";
 import { Watch } from "vue-plus/watch";
 import { HookReturns, hooksCompose } from "vue-plus/hooks";
-import AngularTest from "./test.xvue";
+// import AngularTest from "./test.xvue";
+import type { NavigationGuard } from "vue-router";
 
 
 @Injectable()
@@ -82,7 +83,7 @@ const demoToken = InjectionToken<ClassK>();
   components: [
     CommunityIcon,
     ModelDemo,
-    AngularTest
+    // AngularTest
   ],
   template: `
     <ul>
@@ -100,7 +101,7 @@ const demoToken = InjectionToken<ClassK>();
     <div>{{param}}</div>
     <div>{{testProxy}}</div>
     <div>{{testGetter}}</div>
-    <AngularTest></AngularTest>
+<!--    <AngularTest></AngularTest>-->
   `,
   providers: [
     { provide: demoToken, useClass: ClassK }
@@ -135,9 +136,9 @@ export default class AngularDemo extends HookReturns<ReturnType<typeof useMouse>
 
   constructor(public router: Router, public route: Route) {
     super();
-    console.log(router);
-    console.log(route);
-    setTimeout(() => console.log(route.name), 3000)
+    // console.log(router);
+    // console.log(route);
+    // setTimeout(() => console.log(route.name), 3000)
     // router.push({
     //   name: '',
     //   query: {}
@@ -155,7 +156,6 @@ export default class AngularDemo extends HookReturns<ReturnType<typeof useMouse>
     return {x, y}
   }
 
-
   onMounted(): void {
     console.log(this.itemRefs);
     console.log('this.childRef.value!.model');
@@ -167,5 +167,14 @@ export default class AngularDemo extends HookReturns<ReturnType<typeof useMouse>
   }
 
   onUnmounted(): void {
+  }
+
+  onBeforeRouteLeave(to:RouteLocationNormalized, from:RouteLocationNormalized, next:NavigationGuardNext): ReturnType<NavigationGuard> {
+    console.log(to, 'onBeforeRouteLeave');
+    next()
+  }
+
+  onBeforeRouteUpdate(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext): ReturnType<NavigationGuard> {
+    console.log(to, 'onBeforeRouteUpdate');
   }
 }

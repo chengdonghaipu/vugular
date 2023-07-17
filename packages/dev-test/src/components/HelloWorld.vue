@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import AngularDemo from '../angular/components/demo.xvue'
-import {onMounted, ref} from "vue";
+import { onMounted, ref, watch } from "vue";
 import CustomInput from './CustomInput.vue'
 import Test1 from './Test1.vue'
 import Test2 from './Test2.vue'
+import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from "vue-router";
 defineProps<{
   msg: string
 }>()
@@ -12,10 +13,14 @@ function messageChange(f) {
   // console.log(f);
 }
 const message = ref('hello')
+const route = useRoute();
+console.log(route.params, 'fdfdf');
+
 onMounted(() => {
   // child.value 是 <Child /> 组件的实例
   // console.log(child);
   console.log(222);
+
 })
 </script>
 

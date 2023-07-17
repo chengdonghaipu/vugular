@@ -1,5 +1,9 @@
 import type { ComponentPublicInstance, InjectionKey } from 'vue';
 import type { ReactiveEffect, TrackOpTypes, TriggerOpTypes } from 'vue';
+import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
+import type { NavigationGuard } from "vue-router";
+import { onBeforeRouteUpdate } from "vue-router";
+
 
 export interface Type<T> extends Function {
   new (...args: any[]): T;
@@ -38,32 +42,36 @@ type DebuggerRenderEvent = {
   oldValue?: any;
   oldTarget?: Map<any, any> | Set<any>;
 };
-export interface LifecycleHook {
+export interface RouterLifecycleHook {
+
+}
+interface BaseLifecycleHook {
   onMounted?(): void;
   onSetup?(): any;
-
   onUpdated?(): void;
-
   onUnmounted?(): void;
-
   onBeforeMount?(): void;
-
   onBeforeUpdate?(): void;
-
   onBeforeUnmount?(): void;
-
   onErrorCaptured?(err: unknown, instance: ComponentPublicInstance | null, info: string): boolean | void;
-
   onRenderTracked?(e: DebuggerEvent): void;
-
   onRenderTriggered?(e: DebuggerRenderEvent): void;
-
-  onActivated?(): void;
-
   onDeactivated?(): void;
-
   onServerPrefetch?(): Promise<any>;
+
+  onBeforeRouteLeave?(
+    to: RouteLocationNormalized,
+    from: RouteLocationNormalized,
+    next: NavigationGuardNext,
+  ): ReturnType<NavigationGuard>;
+  onBeforeRouteUpdate?(
+    to: RouteLocationNormalized,
+    from: RouteLocationNormalized,
+    next: NavigationGuardNext,
+  ): ReturnType<NavigationGuard>;
 }
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type LifecycleHook = BaseLifecycleHook;
 
 export function InjectionToken<T = any>(desc?: string): InjectionKey<T> {
   return Symbol(desc);

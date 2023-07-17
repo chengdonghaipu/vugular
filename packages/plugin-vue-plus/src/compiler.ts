@@ -1,26 +1,28 @@
-import * as ts from "typescript";
-import { CallExpression, ConstructorDeclaration, NamedImports, StringLiteral } from "typescript";
-import path from "path";
-import { readFileSync } from "fs";
-import * as fs from "fs";
-import { parse as vueTemplateParse, RootNode, TemplateChildNode } from "@vue/compiler-dom";
-import MagicString from "magic-string";
-import { reactive } from "vue";
+import * as ts from 'typescript';
+import { CallExpression, ConstructorDeclaration, NamedImports, StringLiteral } from 'typescript';
+import path from 'path';
+import { readFileSync } from 'fs';
+import * as fs from 'fs';
+import { parse as vueTemplateParse, RootNode, TemplateChildNode } from '@vue/compiler-dom';
+import MagicString from 'magic-string';
+import { reactive } from 'vue';
 
 const lifecycleHook = [
-  "onMounted",
-  "onUpdated",
-  "onUnmounted",
-  "onBeforeMount",
-  "onBeforeUpdate",
-  "onBeforeUnmount",
-  "onErrorCaptured",
-  "onRenderTracked",
-  "onRenderTriggered",
-  "onActivated",
-  "onDeactivated",
-  "onServerPrefetch"
+  'onMounted',
+  'onUpdated',
+  'onUnmounted',
+  'onBeforeMount',
+  'onBeforeUpdate',
+  'onBeforeUnmount',
+  'onErrorCaptured',
+  'onRenderTracked',
+  'onRenderTriggered',
+  'onActivated',
+  'onDeactivated',
+  'onServerPrefetch',
 ];
+
+const routerLifecycleHook = ['onBeforeRouteLeave', 'onBeforeRouteUpdate'];
 
 function getTemplate(template: string) {
   return `<template>${template}</template>`;
@@ -28,7 +30,7 @@ function getTemplate(template: string) {
 
 function getScript(template: string) {
   return `
-    <script setup lang="ts">${template}</script>
+    <script setup lang="ts">${template}</script> 
     `;
 }
 
@@ -39,19 +41,19 @@ function getStyle(template: string, lang: string) {
 export class Compiler {
   private readonly ms: MagicString;
   private readonly sourceFile!: ts.SourceFile;
-  properties: { name: string; value: string, needReactive: boolean }[] = [];
+  properties: { name: string; value: string; needReactive: boolean }[] = [];
   methods: { name: string; params: any }[] = [];
   lifecycleHook: { name: string; params: any }[] = [];
   vueDepends: string[] = [];
   diDepends: string[] = [];
   updateMeta: any[] = [];
   paramTypes: any[] = [];
-  template = "";
-  componentName = "";
-  templateUrl = "";
-  selector = "";
-  newSourceCode = "";
-  finalSourceCode = "";
+  template = '';
+  componentName = '';
+  templateUrl = '';
+  selector = '';
+  newSourceCode = '';
+  finalSourceCode = '';
   styleUrls: string[] = [];
   dependencies: { dep: string; export: string; originExport: string }[] = [];
   styles: string[] = [];
@@ -63,7 +65,7 @@ export class Compiler {
     setter: { start: number; end: number; body: string; name: string }[];
   } = {
     getter: [],
-    setter: []
+    setter: [],
   };
   views: any[] = [];
   outputs: any[] = [];
@@ -108,15 +110,15 @@ export class Compiler {
       inputs: this.inputs,
       outputs: this.outputs,
       models: this.models,
-      views: this.views
+      views: this.views,
     };
   }
 
   private collectDependencies(statements: ts.NodeArray<ts.Statement>) {
-    const dep = ["vue-plus", "vue"];
+    const dep = ['vue-plus', 'vue'];
     const appendDep = {
-      "vue-plus": (d: string) => this.diDepends.push(d),
-      vue: (d: string) => this.vueDepends.push(d)
+      'vue-plus': (d: string) => this.diDepends.push(d),
+      vue: (d: string) => this.vueDepends.push(d),
     };
 
     for (const statement of statements) {
@@ -124,7 +126,7 @@ export class Compiler {
         continue;
       }
 
-      const text = statement.moduleSpecifier.getText().replace(/"|'/g, "");
+      const text = statement.moduleSpecifier.getText().replace(/"|'/g, '');
 
       const namedBindings = statement.importClause?.namedBindings as NamedImports;
 
@@ -133,22 +135,20 @@ export class Compiler {
           this.dependencies.push({
             dep: text,
             export: element.name.escapedText as string,
-            originExport: element.propertyName ? (element.propertyName?.escapedText as string) : ""
+            originExport: element.propertyName ? (element.propertyName?.escapedText as string) : '',
           });
         });
       } else if (statement.importClause?.name) {
         this.dependencies.push({
           dep: text,
           export: statement.importClause?.name.escapedText as string,
-          originExport: ""
+          originExport: '',
         });
       }
-
 
       if (!dep.includes(text)) {
         continue;
       }
-
 
       if (!namedBindings) {
         continue;
@@ -170,7 +170,7 @@ export class Compiler {
         if (!decorators) {
           const type = param.type!.getText();
 
-          const dep = this.dependencies.find(v => v.export === type);
+          const dep = this.dependencies.find((v) => v.export === type);
 
           if (
             dep &&
@@ -202,19 +202,19 @@ export class Compiler {
         this.updateMeta.push({
           start,
           end,
-          action: "del"
+          action: 'del',
         });
 
-        const allow = ["Inject", "Host", "SkipSelf", "Self", "Optional"];
+        const allow = ['Inject', 'Host', 'SkipSelf', 'Self', 'Optional'];
         const flagMap: any = {
           Inject: {},
           Host: { host: true },
           SkipSelf: { skipSelf: true },
           Self: { self: true },
-          Optional: { optional: true }
+          Optional: { optional: true },
         };
 
-        let token = "";
+        let token = '';
 
         decorators.forEach((de) => {
           const expression = (de.expression as CallExpression).expression;
@@ -224,23 +224,23 @@ export class Compiler {
             return;
           }
 
-          if (name === "Inject") {
+          if (name === 'Inject') {
             token = (de.expression as CallExpression).arguments[0].getText();
           }
 
           decoratorList.push({
             name: (de.expression as CallExpression).expression.getText(),
-            flag: flagMap[name]
+            flag: flagMap[name],
           });
         });
 
-        if (!token || !decoratorList.some((value) => value.name === "Inject")) {
+        if (!token || !decoratorList.some((value) => value.name === 'Inject')) {
           token = param.type!.getText();
         }
 
         let injectOptions = decoratorList.reduce(
           (previousValue, currentValue) => Object.assign(previousValue, currentValue.flag),
-          {}
+          {},
         );
 
         if (onlyOptional && injectOptions.optional) {
@@ -273,7 +273,7 @@ export class Compiler {
 
     const insertText = `\n;Object.defineProperty(${className}, '__decorator__', {
     value: {
-        paramTypes: [${paramTypes.join(",")}],
+        paramTypes: [${paramTypes.join(',')}],
     },
     configurable: false,
     writable: false,
@@ -282,8 +282,8 @@ export class Compiler {
     this.updateMeta.push({
       start: end,
       end: end + insertText.length,
-      action: "add",
-      insertText
+      action: 'add',
+      insertText,
     });
 
     this.needInjectableInjector = true;
@@ -296,7 +296,7 @@ export class Compiler {
       return [];
     }
 
-    const modelDecorator = decorators && Compiler.getDecorator(decorators, "Model");
+    const modelDecorator = decorators && Compiler.getDecorator(decorators, 'Model');
 
     if (!modelDecorator) {
       return [];
@@ -304,10 +304,10 @@ export class Compiler {
 
     const meta: any = {
       name: node.name.getText(),
-      param: "",
+      param: '',
       modifiers: null,
       props: [],
-      emit: ""
+      emit: '',
     };
 
     const [arg] = (modelDecorator.expression as CallExpression).arguments;
@@ -318,8 +318,8 @@ export class Compiler {
       meta.emit = `update:${meta.param}`;
       meta.props = [`${meta.param}`];
     } else {
-      meta.emit = "update:modelValue";
-      meta.props = ["modelValue"];
+      meta.emit = 'update:modelValue';
+      meta.props = ['modelValue'];
     }
 
     // const [p1] = (modelDecorator.expression as CallExpression).arguments;
@@ -360,14 +360,14 @@ export class Compiler {
     // }
 
     const propertyName = node.name.getText();
-    const propertyValue = node.initializer?.getText() ?? "undefined";
+    const propertyValue = node.initializer?.getText() ?? 'undefined';
     this.properties.push({ name: propertyName, value: propertyValue, needReactive: false });
 
     if (meta.props.length) {
       return [meta];
     }
 
-    new Errors("error");
+    new Error('error');
     //
     return [];
   }
@@ -379,7 +379,7 @@ export class Compiler {
       return [];
     }
 
-    const outputDecorator = decorators && Compiler.getDecorator(decorators, "Output");
+    const outputDecorator = decorators && Compiler.getDecorator(decorators, 'Output');
 
     if (!outputDecorator) {
       return [];
@@ -387,7 +387,7 @@ export class Compiler {
 
     const meta = {
       name: node.name.getText(),
-      alias: node.name.getText()
+      alias: node.name.getText(),
     };
 
     const [arg] = (outputDecorator.expression as CallExpression).arguments;
@@ -397,7 +397,7 @@ export class Compiler {
     }
 
     const propertyName = node.name.getText();
-    const propertyValue = node.initializer?.getText() ?? "undefined";
+    const propertyValue = node.initializer?.getText() ?? 'undefined';
     this.properties.push({ name: propertyName, value: propertyValue, needReactive: false });
 
     return [meta];
@@ -410,8 +410,8 @@ export class Compiler {
       return [];
     }
 
-    const viewDecorator = decorators && Compiler.getDecorator(decorators, "ViewChild");
-    const viewsDecorator = decorators && Compiler.getDecorator(decorators, "ViewChildren");
+    const viewDecorator = decorators && Compiler.getDecorator(decorators, 'ViewChild');
+    const viewsDecorator = decorators && Compiler.getDecorator(decorators, 'ViewChildren');
 
     if (!viewDecorator && !viewsDecorator) {
       return [];
@@ -420,9 +420,10 @@ export class Compiler {
     const meta = {
       name: node.name.getText(),
       alias: node.name.getText(),
-      views: !viewDecorator
+      views: !viewDecorator,
     };
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const [arg] = ((viewDecorator || viewsDecorator).expression as CallExpression).arguments;
 
@@ -431,7 +432,7 @@ export class Compiler {
     }
 
     const propertyName = node.name.getText();
-    const propertyValue = node.initializer?.getText() ?? "undefined";
+    const propertyValue = node.initializer?.getText() ?? 'undefined';
     this.properties.push({ name: propertyName, value: propertyValue, needReactive: false });
 
     return [meta];
@@ -444,7 +445,7 @@ export class Compiler {
       return [];
     }
 
-    const inputDecorator = decorators && Compiler.getDecorator(decorators, "Input");
+    const inputDecorator = decorators && Compiler.getDecorator(decorators, 'Input');
 
     if (!inputDecorator) {
       return [];
@@ -452,9 +453,9 @@ export class Compiler {
 
     const meta = {
       required: false,
-      type: "",
+      type: '',
       name: node.name.getText(),
-      alias: node.name.getText()
+      alias: node.name.getText(),
     };
     const [arg] = (inputDecorator.expression as CallExpression).arguments;
 
@@ -479,7 +480,7 @@ export class Compiler {
     //
     // }
     const propertyName = node.name.getText();
-    const propertyValue = node.initializer?.getText() ?? "undefined";
+    const propertyValue = node.initializer?.getText() ?? 'undefined';
     this.properties.push({ name: propertyName, value: propertyValue, needReactive: false });
     return [meta];
   }
@@ -489,28 +490,28 @@ export class Compiler {
       return;
     }
 
-    const isExtends = (node.heritageClauses || []).find((value) => value.getText().includes("extends"));
+    const isExtends = (node.heritageClauses || []).find((value) => value.getText().includes('extends'));
     this.componentName = node.name!.getText();
     // reactiveProxy
-    const constructorNode = node.members.find(v => v.kind === ts.SyntaxKind.Constructor) as ConstructorDeclaration;
+    const constructorNode = node.members.find((v) => v.kind === ts.SyntaxKind.Constructor) as ConstructorDeclaration;
 
     if (constructorNode) {
       this.updateMeta.push({
         start: constructorNode.body!.statements.end,
         end: constructorNode.body!.statements.end,
-        action: "add",
-        insertText: "\n    return reactiveProxy.apply(this)"
+        action: 'add',
+        insertText: '\n    return reactiveProxy.apply(this)',
       });
     } else {
       this.updateMeta.push({
         start: node.members.end,
         end: node.members.end,
-        action: "add",
+        action: 'add',
         insertText: `
         constructor() {
-    ${isExtends ? "super();" : ""}
+    ${isExtends ? 'super();' : ''}
     return reactiveProxy.apply(this)
-  }`
+  }`,
       });
     }
     const newSourceCode = this.sourceFile.getText();
@@ -527,11 +528,11 @@ export class Compiler {
         }
 
         const propertyName = member.name.getText();
-        const propertyValue = member.initializer?.getText() ?? "undefined";
+        const propertyValue = member.initializer?.getText() ?? 'undefined';
         this.properties.push({
           name: propertyName,
           value: propertyValue,
-          needReactive: !propertyValue.startsWith("ref(") && member.initializer?.kind !== ts.SyntaxKind.ArrowFunction
+          needReactive: !propertyValue.startsWith('ref(') && member.initializer?.kind !== ts.SyntaxKind.ArrowFunction,
         });
       } else if (ts.isMethodDeclaration(member)) {
         if (
@@ -541,21 +542,21 @@ export class Compiler {
         }
 
         // 收集 public 方法的信息
-        const methodInfo: any = { params: [], name: "" };
+        const methodInfo: any = { params: [], name: '' };
         // console.log(member.parameters)
         member.parameters.forEach((param) => {
           return methodInfo.params.push(param.name!.getText());
         });
         const name = member.name!.getText();
-        if (lifecycleHook.includes(name)) {
+        if (lifecycleHook.includes(name) || routerLifecycleHook.includes(name)) {
           this.lifecycleHook.push({
             name,
-            params: methodInfo.params
+            params: methodInfo.params,
           });
         } else {
           this.methods.push({
             name,
-            params: methodInfo.params
+            params: methodInfo.params,
           });
         }
       } else if (ts.isConstructorDeclaration(member)) {
@@ -568,7 +569,7 @@ export class Compiler {
           start: start,
           end: end,
           body,
-          name: member.name.getText()
+          name: member.name.getText(),
         });
       } else if (ts.isSetAccessor(member)) {
         const start = member.body!.statements.pos;
@@ -578,7 +579,7 @@ export class Compiler {
           start: member.pos,
           end: member.end,
           body,
-          name: member.name.getText()
+          name: member.name.getText(),
         });
       }
     }
@@ -586,14 +587,14 @@ export class Compiler {
     const { getter, setter } = this.accessor;
 
     for (const getterElement of getter) {
-      const isExistSetter = setter.find(v => v.name === getterElement.name);
+      const isExistSetter = setter.find((v) => v.name === getterElement.name);
       const { start, end, name, body } = getterElement;
       if (!isExistSetter) {
         this.updateMeta.push({
           start,
           end,
-          action: "update",
-          insertText: `\n    // eslint-disable-next-line @typescript-eslint/ban-ts-comment\n    // @ts-ignore\n    return this.__vg_accessor_computed__${name}.value`
+          action: 'update',
+          insertText: `\n    // eslint-disable-next-line @typescript-eslint/ban-ts-comment\n    // @ts-ignore\n    return this.__vg_accessor_computed__${name}.value`,
         });
         continue;
       }
@@ -602,24 +603,24 @@ export class Compiler {
       this.updateMeta.push({
         start: isExistSetter.start,
         end: isExistSetter.end,
-        action: "update",
+        action: 'update',
         insertText: `\n  set ${isExistSetter.name}(value) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     this.__vg_accessor_computed__testGetter.value = value
-  }`
+  }`,
       });
 
       this.updateMeta.push({
         start,
         end,
-        action: "update",
-        insertText: `\n    // eslint-disable-next-line @typescript-eslint/ban-ts-comment\n    // @ts-ignore\n    return this.__vg_accessor_computed__${name}.value`
+        action: 'update',
+        insertText: `\n    // eslint-disable-next-line @typescript-eslint/ban-ts-comment\n    // @ts-ignore\n    return this.__vg_accessor_computed__${name}.value`,
       });
     }
 
     const decorators = ts.canHaveDecorators(node) ? ts.getDecorators(node) : undefined;
-    const componentDecorator = decorators && Compiler.getDecorator(decorators, "Component");
+    const componentDecorator = decorators && Compiler.getDecorator(decorators, 'Component');
 
     if (!componentDecorator) {
       return;
@@ -641,7 +642,7 @@ export class Compiler {
         this.updateMeta.push({
           start,
           end,
-          action: "del"
+          action: 'del',
           // insertText: '@ReactiveProxy()'
         });
       } else {
@@ -657,26 +658,26 @@ export class Compiler {
         const value = prop.initializer.getText().slice(1, -1); // 去掉引号
 
         switch (name) {
-          case "template":
+          case 'template':
             this.template = value;
             break;
-          case "templateUrl":
+          case 'templateUrl':
             this.templateUrl = value;
             break;
-          case "selector":
+          case 'selector':
             this.selector = value;
             break;
-          case "styleUrls":
+          case 'styleUrls':
             if (ts.isArrayLiteralExpression(prop.initializer)) {
               this.styleUrls = prop.initializer.elements.map((e) => e.getText().slice(1, -1));
             }
             break;
-          case "styles":
+          case 'styles':
             if (ts.isArrayLiteralExpression(prop.initializer)) {
               this.styles = prop.initializer.elements.map((e) => e.getText().slice(1, -1));
             }
             break;
-          case "providers":
+          case 'providers':
             if (!ts.isArrayLiteralExpression(prop.initializer)) {
               break;
             }
@@ -684,10 +685,10 @@ export class Compiler {
             this.providers = prop.initializer.elements.map((element) => {
               if (ts.isObjectLiteralExpression(element)) {
                 const provideNode: any = element.properties.find(
-                  (prop) => ts.isIdentifier(prop.name!) && prop.name.escapedText === "provide"
+                  (prop) => ts.isIdentifier(prop.name!) && prop.name.escapedText === 'provide',
                 );
                 const useClassNode: any = element.properties.find(
-                  (prop) => ts.isIdentifier(prop.name!) && prop.name.escapedText === "useClass"
+                  (prop) => ts.isIdentifier(prop.name!) && prop.name.escapedText === 'useClass',
                 );
                 if (
                   provideNode &&
@@ -708,10 +709,12 @@ export class Compiler {
   }
 
   private forEachChild(node: RootNode | TemplateChildNode, callback: (node: TemplateChildNode) => void) {
-    if ("children" in node && node.children && node.children?.length) {
+    if ('children' in node && node.children && node.children?.length) {
       for (const child of node.children) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         child.parent = node;
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         callback(child as TemplateChildNode);
         this.forEachChild(child as TemplateChildNode, callback);
@@ -724,10 +727,10 @@ export class Compiler {
     const updateMeta: any[] = [];
 
     this.forEachChild(rootNode, (node: any) => {
-      const props = (node.props || []).sort((a, b) => {
-        if (a.name === "for") {
+      const props = (node.props || []).sort((a: { name: string }, b: { name: string }) => {
+        if (a.name === 'for') {
           return -1; // 将 a 排在 b 之前
-        } else if (b.name === "for") {
+        } else if (b.name === 'for') {
           return 1; // 将 b 排在 a 之前
         }
         return 0; // 保持原有顺序
@@ -746,7 +749,7 @@ export class Compiler {
             const start = exp.loc.start.offset;
             const end = exp.loc.end.offset;
 
-            if (prop.name === "for") {
+            if (prop.name === 'for') {
               const regex = /(\w+)\s+in\s+/;
               const str = exp.content;
               const match = str.match(regex);
@@ -760,15 +763,17 @@ export class Compiler {
               continue;
             }
 
-            if (prop.name === "bind") {
-              if (templateVars.find(v => v === exp.content)) {
+            if (prop.name === 'bind') {
+              if (templateVars.find((v: any) => v === exp.content)) {
                 continue;
               }
             }
 
-            if (prop.name !== "on") {
+            if (prop.name !== 'on') {
               // ref 不转换
-              const exist = this.properties.find(v => v.name === exp.content && v.value && v.value.startsWith("ref("));
+              const exist = this.properties.find(
+                (v) => v.name === exp.content && v.value && v.value.startsWith('ref('),
+              );
               if (exist) {
                 continue;
               }
@@ -777,9 +782,9 @@ export class Compiler {
             updateMeta.push({
               start,
               end,
-              action: "update",
+              action: 'update',
               insertText: `__vg_component__.${exp.content}`,
-              text: exp.content
+              text: exp.content,
             });
             continue;
           } else if (prop.type === 6) {
@@ -789,7 +794,7 @@ export class Compiler {
               const start = refValue.loc.start.offset + 1;
               const end = refValue.loc.end.offset + 1;
 
-              const exist = this.views.find(v => v.alias === refValue.content);
+              const exist = this.views.find((v) => v.alias === refValue.content);
 
               if (!exist) {
                 continue;
@@ -798,9 +803,9 @@ export class Compiler {
               updateMeta.push({
                 start,
                 end,
-                action: "update",
+                action: 'update',
                 insertText: `__vg_${refValue.content}__`,
-                text: refValue.content + ""
+                text: refValue.content + '',
               });
             }
           }
@@ -809,26 +814,28 @@ export class Compiler {
 
       if (node.type === 5) {
         const content = node.content;
-        if (content.type === 4/* && content.content !== 'modelValue'*/) {
+        if (content.type === 4 /* && content.content !== 'modelValue'*/) {
           const start = content.loc.start.offset;
           const end = content.loc.end.offset;
 
           // ref 不转换
-          const exist = this.properties.find(v => v.name === content.content && v.value && v.value.startsWith("ref("));
+          const exist = this.properties.find(
+            (v) => v.name === content.content && v.value && v.value.startsWith('ref('),
+          );
           if (exist) {
             return;
           }
 
-          if (templateVars.find(v => v === content.content)) {
+          if (templateVars.find((v: any) => v === content.content)) {
             return;
           }
 
           updateMeta.push({
             start,
             end,
-            action: "update",
+            action: 'update',
             insertText: `__vg_component__.${content.content}`,
-            text: content.content
+            text: content.content,
           });
 
           return;
@@ -842,10 +849,10 @@ export class Compiler {
     let offset = 0;
 
     updateMeta_.forEach(({ start, end, action, insertText, text }) => {
-      if (action === "update") {
-        const tempCodes = newSourceCode.split("");
+      if (action === 'update') {
+        const tempCodes = newSourceCode.split('');
         tempCodes.splice(start - offset, text.length, insertText);
-        newSourceCode = tempCodes.join("");
+        newSourceCode = tempCodes.join('');
         offset += text.length - insertText.length;
       }
     });
@@ -857,11 +864,11 @@ export class Compiler {
     const statements = this.sourceFile.statements;
 
     this.collectDependencies(statements);
-    const componentDeclaration = statements.find((value) => Compiler.hasDecoratorByName(value, "Component"));
+    const componentDeclaration = statements.find((value) => Compiler.hasDecoratorByName(value, 'Component'));
     componentDeclaration && this.parseComponent(componentDeclaration);
 
     statements.forEach((s) => {
-      const injectableDeclaration = Compiler.hasDecoratorByName(s, "Injectable");
+      const injectableDeclaration = Compiler.hasDecoratorByName(s, 'Injectable');
       injectableDeclaration && this.parseInjectable(s);
     });
 
@@ -871,24 +878,24 @@ export class Compiler {
     let deleteCount = 0;
 
     this.updateMeta.forEach(({ start, end, action, insertText }) => {
-      if (action === "del") {
+      if (action === 'del') {
         const prefix = newSourceCode.slice(0, start - deleteCount);
         const suffix = newSourceCode.slice(end - deleteCount);
-        newSourceCode = prefix + " " + suffix;
+        newSourceCode = prefix + ' ' + suffix;
         deleteCount += end - start - 1;
         this.ms.remove(start, end);
-      } else if (action === "add") {
+      } else if (action === 'add') {
         // console.log('start - deleteCount', start - deleteCount, insertText);
-        const tempCodes = newSourceCode.split("");
+        const tempCodes = newSourceCode.split('');
         tempCodes.splice(start - deleteCount, 0, insertText);
-        newSourceCode = tempCodes.join("");
+        newSourceCode = tempCodes.join('');
         deleteCount -= end - start;
         this.ms.appendLeft(start, insertText);
-      } else if (action === "update") {
+      } else if (action === 'update') {
         // console.log('start - deleteCount', start - deleteCount, insertText);
-        const tempCodes = newSourceCode.split("");
+        const tempCodes = newSourceCode.split('');
         tempCodes.splice(start - deleteCount, end - start, insertText);
-        newSourceCode = tempCodes.join("");
+        newSourceCode = tempCodes.join('');
         deleteCount += insertText.length - (end - start);
         this.ms.update(start, end, insertText);
       }
@@ -908,7 +915,7 @@ export class Compiler {
     const { templateUrl, template, styles, styleUrls, lifecycleHook, providers, paramTypes, componentName } = meta;
 
     if (template && templateUrl) {
-      throw Error("template, templateUrl must exist a");
+      throw Error('template, templateUrl must exist a');
     }
 
     if (!template) {
@@ -918,7 +925,7 @@ export class Compiler {
         // console.log(url, basePath);
         this.template = readFileSync(url).toString();
       } else {
-        this.template = "";
+        this.template = '';
       }
     }
 
@@ -928,28 +935,41 @@ export class Compiler {
       finalStyles.push(...styles);
     }
 
-    let cssLessType = "css";
+    let cssLessType = 'css';
 
     if (styleUrls) {
       styleUrls.push(
         ...styleUrls.map((v: string) => {
           const basePath = path.dirname(id);
           const url = path.resolve(basePath, v);
-          cssLessType = path.extname(url).replace(".", "");
+          cssLessType = path.extname(url).replace('.', '');
           return readFileSync(url).toString();
-        })
+        }),
       );
     }
 
     const finalScript = [];
     const unDepImports: string[] = [];
-    if (meta.inputs.length && !this.vueDepends.includes("defineProps")) {
+    const unRouteDepImports: string[] = [];
+    if (meta.inputs.length && !this.vueDepends.includes('defineProps')) {
       // unDepImports.push("defineProps")
     }
 
     if (lifecycleHook) {
       lifecycleHook.forEach((value: { name: string }) => {
         const { name } = value;
+
+        if (routerLifecycleHook.includes(name)) {
+          const dep = this.dependencies.find((v) => v.export === name && v.dep === 'vue-router');
+
+          if (dep) {
+            return;
+          }
+
+          unRouteDepImports.push(name);
+          return;
+        }
+
         if (this.vueDepends.includes(name)) {
           return;
         }
@@ -958,49 +978,54 @@ export class Compiler {
       });
     }
 
-    if (meta.views.length && !unDepImports.includes("ref") && !this.vueDepends.includes("ref")) {
-      unDepImports.push("ref");
+    if (meta.views.length && !unDepImports.includes('ref') && !this.vueDepends.includes('ref')) {
+      unDepImports.push('ref');
     }
     // if (this.accessor.getter.length && !unDepImports.includes('computed') && !this.vueDepends.includes("computed")) {
     //   unDepImports.push('computed')
     // }
 
-    if (!unDepImports.includes("watch") && !this.vueDepends.includes("watch")) {
-      unDepImports.push("watch");
+    if (!unDepImports.includes('watch') && !this.vueDepends.includes('watch')) {
+      unDepImports.push('watch');
     }
 
     if (unDepImports.length) {
       // console.log(unDepImports);
-      finalScript.unshift(`\nimport { ${unDepImports.join(", ")} } from 'vue';`);
+      finalScript.unshift(`\nimport { ${unDepImports.join(', ')} } from 'vue';`);
+      // this.ms.prepend(`\nimport { ${unDepImports.join(", ")} } from 'vue';`)
+    }
+    if (unRouteDepImports.length) {
+      // console.log(unDepImports);
+      finalScript.unshift(`\nimport { ${unRouteDepImports.join(', ')} } from 'vue-router';`);
       // this.ms.prepend(`\nimport { ${unDepImports.join(", ")} } from 'vue';`)
     }
 
     const unImports = [];
 
-    if (!this.diDepends.includes("attachInjector")) {
-      unImports.push("attachInjector");
+    if (!this.diDepends.includes('attachInjector')) {
+      unImports.push('attachInjector');
     }
 
-    if (!this.diDepends.includes("watchWrap")) {
-      unImports.push("watchWrap");
+    if (!this.diDepends.includes('watchWrap')) {
+      unImports.push('watchWrap');
     }
-    if (!this.diDepends.includes("reactiveProxy")) {
-      unImports.push("reactiveProxy");
+    if (!this.diDepends.includes('reactiveProxy')) {
+      unImports.push('reactiveProxy');
     }
 
-    if (this.needInjectableInjector && !this.diDepends.includes("attachInjectableInjector")) {
-      unImports.push("attachInjectableInjector");
+    if (this.needInjectableInjector && !this.diDepends.includes('attachInjectableInjector')) {
+      unImports.push('attachInjectableInjector');
     }
 
     if (unImports.length) {
-      finalScript.unshift(`\nimport { ${unImports.join(", ")} } from 'vue-plus';`);
+      finalScript.unshift(`\nimport { ${unImports.join(', ')} } from 'vue-plus';`);
       // this.ms.prepend(`\nimport { ${unImports.join(", ")} } from 'vue-plus';`)
     }
 
     finalScript.push(`const __vg_context__: any = {};`);
 
     if (meta.views.length || meta.views.length) {
-      meta.views.forEach(v => {
+      meta.views.forEach((v) => {
         if (v.views) {
           finalScript.push(`\nconst __vg_${v.alias}__ = ref([]);`);
           finalScript.push(`\n__vg_context__['${v.alias}'] = __vg_${v.alias}__`);
@@ -1033,7 +1058,7 @@ export class Compiler {
     }
 
     if (newSourceCode) {
-      this.ms.prepend(finalScript.join(""));
+      this.ms.prepend(finalScript.join(''));
       finalScript.push(`\n${newSourceCode}`);
     }
 
@@ -1041,40 +1066,40 @@ export class Compiler {
 
     function accessorString() {
       const { getter, setter } = accessor;
-      const tempGetter = getter.map(v => {
+      const tempGetter = getter.map((v) => {
         return {
           name: v.name,
           body: `function() {
     ${v.body}   
-}`
+}`,
         };
       });
-      const tempSetter = setter.map(v => {
+      const tempSetter = setter.map((v) => {
         return {
           name: v.name,
           body: `function() {
     ${v.body}   
-}`
+}`,
         };
       });
 
       return JSON.stringify({
         getter: tempGetter,
-        setter: tempSetter
+        setter: tempSetter,
       });
     }
 
     const defineTemp = `\nObject.defineProperty(${componentName}, '__decorator__', {
     value: {
         providers: [
-            ${providers.join(",")}
+            ${providers.join(',')}
         ],
-        paramTypes: [${paramTypes.join(",")}],
+        paramTypes: [${paramTypes.join(',')}],
         outputs: ${JSON.stringify(meta.outputs)},
         inputs: ${JSON.stringify(meta.inputs)},
         models: ${JSON.stringify(meta.models)},
         scope: __vg_context__,
-        reactive: ${JSON.stringify(meta.properties.filter(v => v.needReactive).map(v => v.name))},
+        reactive: ${JSON.stringify(meta.properties.filter((v) => v.needReactive).map((v) => v.name))},
         accessor: ${accessorString()}
     },
     configurable: false,
@@ -1098,7 +1123,7 @@ export class Compiler {
 
   watch(watchWrapElement.sources, watchWrapElement.watchCallback, watchWrapElement.options);
 };`);
-      this.ms.append(`\nconst __vg_component__ = attachInjector(${componentName});console.log(__vg_component__);`);
+      this.ms.append(`\nconst __vg_component__ = attachInjector(${componentName});`);
       this.ms.append(`\nif (typeof (__vg_component__ as any).onSetup === "function") {
   const setupResult$$ = (__vg_component__ as any).onSetup.call(__vg_component__);
   if (setupResult$$ instanceof Promise) {
@@ -1151,9 +1176,9 @@ export class Compiler {
     }
 
     if (exposed.length) {
-      this.ms.append(`\nconst { ${exposed.join(", ")} } = __vg_component__;`);
+      this.ms.append(`\nconst { ${exposed.join(', ')} } = __vg_component__;`);
       this.ms.append(`\ndefineExpose(__vg_component__);`);
-      finalScript.push(`\nconst { ${exposed.join(", ")} } = __vg_component__;`);
+      finalScript.push(`\nconst { ${exposed.join(', ')} } = __vg_component__;`);
       // const defineExposes = meta.methods.map((v) => v.name).concat(meta.properties.map((v) => v.name));
       finalScript.push(`\ndefineExpose(__vg_component__);`);
     }
@@ -1165,18 +1190,15 @@ export class Compiler {
 
     // console.log(template);
 
-    this.finalSourceCode = `${getTemplate(template)} \n ${getScript(finalScript.join(""))}\n ${getStyle(
-      finalStyles.join(""),
-      cssLessType
+    this.finalSourceCode = `${getTemplate(template)} \n ${getScript(finalScript.join(''))}\n ${getStyle(
+      finalStyles.join(''),
+      cssLessType,
     )}\n`;
     this.ms.prepend(`${getTemplate(template)} \n <script setup lang="ts">\n`);
-    this.ms.append(`</script>\n ${getStyle(
-      finalStyles.join(""),
-      cssLessType
-    )}\n`);
+    this.ms.append(`</script>\n ${getStyle(finalStyles.join(''), cssLessType)}\n`);
     const map = this.ms.generateMap({
       source: this.id,
-      hires: true
+      hires: true,
       // includeContent: true
     });
     console.log(this.properties);
@@ -1184,14 +1206,14 @@ export class Compiler {
 
     return {
       code: this.ms.toString(),
-      map
+      map,
     };
   }
 
   constructor(public id: string, public originCode: string) {
     const code = originCode;
     this.ms = new MagicString(code);
-    this.sourceFile = ts.createSourceFile("example.ts", code, ts.ScriptTarget.Latest, true);
+    this.sourceFile = ts.createSourceFile('example.ts', code, ts.ScriptTarget.Latest, true);
     this.parse();
   }
 }
