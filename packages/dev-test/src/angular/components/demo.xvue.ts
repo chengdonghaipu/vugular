@@ -1,56 +1,22 @@
-import { Component, Inject, InjectionToken, Optional, SkipSelf } from "vue-plus";
-import type { NavigationGuardNext, RouteLocationNormalized, Router } from "vue-router";
+import { Component, Inject, InjectionToken, Optional, SkipSelf } from 'vue-plus'
+import type { NavigationGuardNext, RouteLocationNormalized, Router } from 'vue-router'
 import type { Route } from 'vue-plus'
-import { onMounted, onUnmounted, ref } from "vue";
-import type { LifecycleHook } from "vue-plus";
-import type { Ref } from "vue";
-import CommunityIcon from "./IconCommunity.vue";
-import ModelDemo from "./model.xvue";
-import { Injectable } from "vue-plus";
-import { Input } from "vue-plus/input";
-import { EventEmitter, Output } from "vue-plus/output";
-import AngularChild from "./model.xvue.ts.vue";
-import { ViewChild, ViewChildren } from "vue-plus/view";
-import { Watch } from "vue-plus/watch";
-import { HookReturns, hooksCompose } from "vue-plus/hooks";
+import { onMounted, onUnmounted, ref } from 'vue'
+import type { LifecycleHook } from 'vue-plus'
+import type { Ref } from 'vue'
+import CommunityIcon from './IconCommunity.vue'
+import ModelDemo from './model.xvue'
+import { Injectable } from 'vue-plus'
+import { Input } from 'vue-plus/input'
+import { EventEmitter, Output } from 'vue-plus/output'
+import AngularChild from './model.xvue.ts.vue'
+import { ViewChild, ViewChildren } from 'vue-plus/view'
+import { Watch } from 'vue-plus/watch'
+import { HookReturns, hooksCompose } from 'vue-plus/hooks'
 // import AngularTest from "./test.xvue";
-import type { NavigationGuard } from "vue-router";
-
-
-@Injectable()
-class RootClassK {
-
-  public update() {
-
-  }
-
-  private pMethod() {
-  }
-}
-
-@Injectable()
-class RootClassK2 {
-
-  public update() {
-  }
-
-  constructor(public root: RootClassK) {
-    console.log(root);
-  }
-
-  private pMethod() {
-  }
-}
-
-class ClassK {
-
-  public update() {
-
-  }
-
-  private pMethod() {
-  }
-}
+import type { NavigationGuard } from 'vue-router'
+import { UserState } from '@/angular/store/user.state'
+import { Select } from '@vugular/store'
 
 function useMouse() {
   // 被组合式函数封装和管理的状态
@@ -58,7 +24,7 @@ function useMouse() {
   const y = ref(0)
 
   // 组合式函数可以随时更改其状态。
-  function update(event: { pageX: number; pageY: number; }) {
+  function update(event: { pageX: number; pageY: number }) {
     x.value = event.pageX
     y.value = event.pageY
   }
@@ -73,16 +39,14 @@ function useMouse() {
 }
 
 type Footer = {
-    [key: string]: any;
-};
-
-const demoToken = InjectionToken<ClassK>();
+  [key: string]: any
+}
 
 @Component({
-  styleUrls: ["./demo.less"],
+  styleUrls: ['./demo.less'],
   components: [
     CommunityIcon,
-    ModelDemo,
+    ModelDemo
     // AngularTest
   ],
   template: `
@@ -92,36 +56,37 @@ const demoToken = InjectionToken<ClassK>();
       </li>
     </ul>
     <div>{{ x }}</div>
-    <div ref="divRef">{{ y }} </div>
+    <div ref="divRef">{{ y }}</div>
     <div>defaultValue: {{ defaultValue }}</div>
-    <div>message: {{message}}</div>
+    <div>message: {{ message }}</div>
     <CommunityIcon></CommunityIcon>
     <ModelDemo v-model:param="param" v-model="model" ref="childRef"></ModelDemo>
-    <div>{{model}}</div>
-    <div>{{param}}</div>
-    <div>{{testProxy}}</div>
-    <div>{{testGetter}}</div>
-<!--    <AngularTest></AngularTest>-->
-  `,
-  providers: [
-    { provide: demoToken, useClass: ClassK }
-  ]
+    <div>{{ model }}</div>
+    <div>{{ param }}</div>
+    <div>{{ testProxy }}</div>
+    <div>{{ testGetter }}</div>
+    <!--    <AngularTest></AngularTest>-->
+  `
 })
-export default class AngularDemo extends HookReturns<ReturnType<typeof useMouse>> implements LifecycleHook {
+export default class AngularDemo
+  extends HookReturns<ReturnType<typeof useMouse>>
+  implements LifecycleHook
+{
+  @Select(UserState.getName) username?: string
   // x = ref(0);
   // y = ref(0);
-  param = ref("param");
-  model = ref("model");
+  param = ref('param')
+  model = ref('model')
   testProxy = 'testProxy'
-  @ViewChildren() itemRefs?: HTMLDivElement[];
-  @ViewChild() childRef?: AngularChild;
-  @Input() readonly message!: string;
-  @Input() readonly defaultValue = 'default';
-  @Input(true) readonly required = 'required';
+  @ViewChildren() itemRefs?: HTMLDivElement[]
+  @ViewChild() childRef?: AngularChild
+  @Input() readonly message!: string
+  @Input() readonly defaultValue = 'default'
+  @Input(true) readonly required = 'required'
   @Input(true) readonly objectInput!: Readonly<Footer>
-  @Output() messageChange = new EventEmitter<string>();
+  @Output() messageChange = new EventEmitter<string>()
 
-  @Watch<AngularDemo>(context => context.y.value)
+  @Watch<AngularDemo>((context) => context.y.value)
   xChange(newX: number) {
     console.log(`x is ${newX}`)
   }
@@ -135,7 +100,7 @@ export default class AngularDemo extends HookReturns<ReturnType<typeof useMouse>
   }
 
   constructor(public router: Router, public route: Route) {
-    super();
+    super()
     // console.log(router);
     // console.log(route);
     // setTimeout(() => console.log(route.name), 3000)
@@ -146,35 +111,42 @@ export default class AngularDemo extends HookReturns<ReturnType<typeof useMouse>
     // const router = useRouter()
   }
   modelChange = (v: any) => {
-    console.log('modelChange', v);
+    console.log('modelChange', v)
   }
 
   onSetup() {
-    const {x, y} = useMouse()
+    const { x, y } = useMouse()
     // hooksCompose(this, useMouse())
 
-    return {x, y}
+    return { x, y }
   }
 
   onMounted(): void {
-    console.log(this.itemRefs);
-    console.log('this.childRef.value!.model');
-    console.log(this.childRef?.model);
+    console.log(this.itemRefs)
+    console.log('this.childRef.value!.model')
+    console.log(this.childRef?.model)
 
     setInterval(() => {
-      this.testProxy += '1';
+      this.testProxy += '1'
     }, 1000)
   }
 
-  onUnmounted(): void {
-  }
+  onUnmounted(): void {}
 
-  onBeforeRouteLeave(to:RouteLocationNormalized, from:RouteLocationNormalized, next:NavigationGuardNext): ReturnType<NavigationGuard> {
-    console.log(to, 'onBeforeRouteLeave');
+  onBeforeRouteLeave(
+    to: RouteLocationNormalized,
+    from: RouteLocationNormalized,
+    next: NavigationGuardNext
+  ): ReturnType<NavigationGuard> {
+    console.log(to, 'onBeforeRouteLeave')
     next()
   }
 
-  onBeforeRouteUpdate(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext): ReturnType<NavigationGuard> {
-    console.log(to, 'onBeforeRouteUpdate');
+  onBeforeRouteUpdate(
+    to: RouteLocationNormalized,
+    from: RouteLocationNormalized,
+    next: NavigationGuardNext
+  ): ReturnType<NavigationGuard> {
+    console.log(to, 'onBeforeRouteUpdate')
   }
 }

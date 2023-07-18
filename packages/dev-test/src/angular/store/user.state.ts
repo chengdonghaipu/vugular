@@ -37,3 +37,5 @@ export class UserState {
     console.log(action)
   }
 }
+
+Reflect.get(window, 'STORE_USE_STATE')(UserState)

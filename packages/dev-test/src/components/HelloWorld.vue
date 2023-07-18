@@ -5,6 +5,14 @@ import CustomInput from './CustomInput.vue'
 import Test1 from './Test1.vue'
 import Test2 from './Test2.vue'
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from "vue-router";
+import { defineStore } from 'pinia'
+
+const useCounterStore = defineStore('counter', {
+  state: () => ({
+    count: 0,
+  }),
+})
+// useCounterStore().$state
 defineProps<{
   msg: string
 }>()
