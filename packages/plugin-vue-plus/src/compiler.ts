@@ -271,14 +271,17 @@ export class Compiler {
       paramTypes = this.parseParamTypes(member.parameters, true);
     });
 
-    const insertText = `\n;Object.defineProperty(${className}, '__decorator__', {
+    let insertText = `\n;Object.defineProperty(${className}, '__decorator__', {
     value: {
         paramTypes: [${paramTypes.join(',')}],
     },
     configurable: false,
     writable: false,
     enumerable: false
-})\nattachInjectableInjector(${className})`;
+});\nconst __instance_${className.toLowerCase()} = attachInjectableInjector(${className});`;
+    if (Compiler.hasDecoratorByName(node, 'State')) {
+      insertText += `\nReflect.get(window, 'STORE_USE_STATE')(${className}, __instance_${className.toLowerCase()})`;
+    }
     this.updateMeta.push({
       start: end,
       end: end + insertText.length,
@@ -868,7 +871,8 @@ export class Compiler {
     componentDeclaration && this.parseComponent(componentDeclaration);
 
     statements.forEach((s) => {
-      const injectableDeclaration = Compiler.hasDecoratorByName(s, 'Injectable');
+      const injectableDeclaration =
+        Compiler.hasDecoratorByName(s, 'Injectable') || Compiler.hasDecoratorByName(s, 'State');
       injectableDeclaration && this.parseInjectable(s);
     });
 

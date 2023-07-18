@@ -1,8 +1,8 @@
 import type { ComponentPublicInstance, InjectionKey } from 'vue';
 import type { ClassProvider, FactoryProvider, Provider, Type, TypeProvider, ValueProvider } from './component';
 import { getCurrentInstance } from 'vue';
-import { NATIVE } from "./const";
-import { useRoute, useRouter } from "vue-router";
+import { NATIVE } from './const';
+import { useRoute, useRouter } from 'vue-router';
 
 type InjectFlags = number;
 
@@ -166,9 +166,9 @@ export class Injector {
     });
   }
 
-  get<T>(token: InjectionKey<T>, notFoundValue?: T, options?: InjectOptions): T;
-  get<T>(token: InjectionKey<T>, notFoundValue: null | undefined, options: InjectOptions): T | null;
-  get<T>(token: InjectionKey<T>, notFoundValue?: T, options?: InjectOptions): T | null {
+  get<T>(token: InjectionKey<T> | Type<any>, notFoundValue?: T, options?: InjectOptions): T;
+  get<T>(token: InjectionKey<T> | Type<any>, notFoundValue: null | undefined, options: InjectOptions): T | null;
+  get<T>(token: InjectionKey<T> | Type<any>, notFoundValue?: T, options?: InjectOptions): T | null {
     const flags = optionsToFlags(options);
 
     if (flags & InjectFlagsEnum.SkipSelf) {
@@ -240,7 +240,7 @@ function getParentInjector(proxy: ComponentPublicInstance): Injector {
   return getParentInjector(parent);
 }
 
-export function attachInjectableInjector(target: Type<any>) {
+export function attachInjectableInjector<T>(target: Type<T>): T | null {
   rootInjector.resolveProvider([target]);
   Object.defineProperty(target, '__injector__', {
     value: rootInjector,
@@ -248,6 +248,7 @@ export function attachInjectableInjector(target: Type<any>) {
     configurable: false,
     writable: false,
   });
+  return rootInjector.get(target, null, { optional: true });
 }
 
 export function attachInjector(target: Type<any>) {
@@ -279,12 +280,12 @@ export function attachInjector(target: Type<any>) {
 
     const dependency = paramTypes.map((paramType) => {
       if (!paramType.token) {
-        if (paramType === "vg_Router") {
+        if (paramType === 'vg_Router') {
           const router = useRouter();
 
           return router;
         }
-        if (paramType === "vg_Route") {
+        if (paramType === 'vg_Route') {
           const route = useRoute();
 
           return route;
