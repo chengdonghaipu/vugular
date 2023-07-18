@@ -4,14 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="df8ed6dc-b462-4206-ae2e-5bad0d60f9be" name="变更" comment="perf(core): sourcemap正确工作">
-      <change afterPath="$PROJECT_DIR$/packages/vue-plus/src/context.ts" afterDir="false" />
+    <list default="true" id="df8ed6dc-b462-4206-ae2e-5bad0d60f9be" name="变更" comment="perf(core): 添加store功能函数签名 尚未具体实现">
+      <change afterPath="$PROJECT_DIR$/packages/dev-test/.babelrc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/store/src/metadata.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/store/src/select.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/store/src/token.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/store/src/use.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/dev-test/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/dev-test/src/angular/components/demo.xvue.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/src/angular/components/demo.xvue.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/dev-test/src/angular/store/user.state.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/src/angular/store/user.state.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/dev-test/src/components/HelloWorld.vue" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/src/components/HelloWorld.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/dev-test/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/tsconfig.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/plugin-vue-plus/src/compiler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/plugin-vue-plus/src/compiler.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/vue-plus/src/const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/vue-plus/src/const.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/store/src/action.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/store/src/action.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/store/src/getter.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/store/src/getter.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/store/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/store/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/store/src/state.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/store/src/state.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/store/src/symbols.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/store/src/symbols.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/vue-plus/src/di.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/vue-plus/src/di.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/vue-plus/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/vue-plus/src/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/vue-plus/src/view.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/vue-plus/src/view.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,27 +55,29 @@
     <option name="showLibraryContents" value="true" />
     <option name="sortByType" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/project/web/vue-plus/packages/dev-test/src/angular/components&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
-    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/jiabinbin/myself/open_source/vue-plus/node_modules/prettier&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;settings.typescriptcompiler&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;E:\\project\\web\\vue-plus\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "E:/project/web/vue-plus/packages",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.standard": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.standard": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "pnpm",
+    "prettierjs.PrettierConfiguration.Package": "E:\\project\\web\\vue-plus\\node_modules\\prettier",
+    "settings.editor.selected.configurable": "actions.on.save",
+    "ts.external.directory.path": "E:\\project\\web\\vue-plus\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\project\web\vue-plus\packages" />
+      <recent name="E:\project\web\vue-plus" />
       <recent name="E:\project\web\vue-plus\packages\dev-test\src\angular\components" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -172,7 +186,8 @@
       <workItem from="1688366760832" duration="46039000" />
       <workItem from="1688536792358" duration="23191000" />
       <workItem from="1688797748474" duration="597000" />
-      <workItem from="1689303092749" duration="21922000" />
+      <workItem from="1689303092749" duration="72221000" />
+      <workItem from="1689576925194" duration="28320000" />
     </task>
     <task id="LOCAL-00001" summary="perf(dev-text): 例子">
       <created>1679817384935</created>
@@ -195,7 +210,63 @@
       <option name="project" value="LOCAL" />
       <updated>1689333125113</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="perf(core): add component scope">
+      <created>1689337427642</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1689337427642</updated>
+    </task>
+    <task id="LOCAL-00005" summary="perf(core): 组件类实例加一层代理reactiveProxy">
+      <created>1689362841569</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1689362841569</updated>
+    </task>
+    <task id="LOCAL-00006" summary="perf(core): 在组件类中如果单个get 或者get set同时存在会编译成computed">
+      <created>1689362952487</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1689362952487</updated>
+    </task>
+    <task id="LOCAL-00007" summary="perf(core): 重新定义get set 与computed之间转换方案">
+      <created>1689433220090</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1689433220090</updated>
+    </task>
+    <task id="LOCAL-00008" summary="perf(core): Router Route支持依赖注入">
+      <created>1689443970077</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1689443970077</updated>
+    </task>
+    <task id="LOCAL-00009" summary="perf(core): 新增BindThis装饰器">
+      <created>1689577236375</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1689577236375</updated>
+    </task>
+    <task id="LOCAL-00010" summary="perf(core): 新增sore模块">
+      <created>1689597985412</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1689597985412</updated>
+    </task>
+    <task id="LOCAL-00011" summary="perf(core): 添加store功能函数签名 尚未具体实现">
+      <created>1689605207901</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1689605207901</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -222,6 +293,14 @@
     <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="perf(dev-text): 例子" />
     <MESSAGE value="perf(core): sourcemap正确工作" />
-    <option name="LAST_COMMIT_MESSAGE" value="perf(core): sourcemap正确工作" />
+    <MESSAGE value="perf(core): add component scope" />
+    <MESSAGE value="perf(core): 组件类实例加一层代理reactiveProxy" />
+    <MESSAGE value="perf(core): 在组件类中如果单个get 或者get set同时存在会编译成computed" />
+    <MESSAGE value="perf(core): 重新定义get set 与computed之间转换方案" />
+    <MESSAGE value="perf(core): Router Route支持依赖注入" />
+    <MESSAGE value="perf(core): 新增BindThis装饰器" />
+    <MESSAGE value="perf(core): 新增sore模块" />
+    <MESSAGE value="perf(core): 添加store功能函数签名 尚未具体实现" />
+    <option name="LAST_COMMIT_MESSAGE" value="perf(core): 添加store功能函数签名 尚未具体实现" />
   </component>
 </project>
