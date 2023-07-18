@@ -1,5 +1,6 @@
 import { META_KEY, META_OPTIONS_KEY, STATE_ACTIONS, STATE_GETTERS } from './token';
 import { Metadata } from './metadata';
+import { ActionDef } from './symbols';
 
 export type StateClass<T = any> = new (...args: any[]) => T;
 
@@ -15,10 +16,16 @@ export interface StoreOptions<T> {
   defaults?: T;
 }
 
+export interface GetterHandlerMetaData {
+  fn: string | symbol;
+  // options: ActionOptions;
+  // type: string;
+}
 export interface ActionHandlerMetaData {
   fn: string | symbol;
   // options: ActionOptions;
   // type: string;
+  actions: ActionDef | ActionDef[];
 }
 
 export interface PlainObjectOf<T> {
@@ -27,7 +34,7 @@ export interface PlainObjectOf<T> {
 export interface MetaDataModel {
   name: string;
   actions: PlainObjectOf<ActionHandlerMetaData>;
-  getters: PlainObjectOf<ActionHandlerMetaData>;
+  getters: PlainObjectOf<GetterHandlerMetaData>;
   defaults: any;
   // path: string | null;
   // makeRootSelector: SelectorFactory | null;
