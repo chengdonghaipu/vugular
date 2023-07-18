@@ -1,7 +1,7 @@
 import { ActionDef, StateContext, Type } from './symbols';
 import { defineStore, Store, StoreDefinition } from 'pinia';
 import { Metadata } from './metadata';
-import { META_KEY } from './token';
+import { META_KEY, STATE_STORE } from './token';
 import { ActionHandlerMetaData, MetaDataModel } from './state';
 
 class StateContextImp<T = any> implements StateContext<T> {
@@ -12,10 +12,11 @@ class StateContextImp<T = any> implements StateContext<T> {
   // eslint-disable-next-line @typescript-eslint/ban-types
   set store(value: StoreDefinition<string, any, {}, {}>) {
     this.#store = value();
+    Metadata.defineMetadata(STATE_STORE, this.#store, this.stateClass);
   }
 
-  constructor(state: Type<T>) {
-    this.#metadata = Metadata.getMetadata(META_KEY, state) || ({} as MetaDataModel);
+  constructor(private readonly stateClass: Type<T>) {
+    this.#metadata = Metadata.getMetadata(META_KEY, stateClass) || ({} as MetaDataModel);
   }
 
   async dispatch(actions: ActionDef | ActionDef[]): Promise<void> {
@@ -65,22 +66,11 @@ class StateContextImp<T = any> implements StateContext<T> {
 export function useState(state: Type<any>, instance: any) {
   // const options: StoreOptions<any> = Metadata.getMetadata(META_OPTIONS_KEY, state) || ({} as StoreOptions<any>);
   const metadata: MetaDataModel = Metadata.getMetadata(META_KEY, state) || ({} as MetaDataModel);
-  console.log(
-    Object.entries(metadata.getters).reduce(
-      (previousValue, currentValue) =>
-        Object.assign(previousValue, {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          [currentValue[0]]: state[currentValue[1].fn],
-        }),
-      {},
-    ),
-  );
 
   const stateContextImp = new StateContextImp(state);
 
   const store = defineStore(metadata.name, {
-    state: () => ({ d: metadata.defaults }),
+    state: () => metadata.defaults || {},
     getters: Object.entries(metadata.getters).reduce(
       (previousValue, currentValue) =>
         Object.assign(previousValue, {
@@ -102,6 +92,6 @@ export function useState(state: Type<any>, instance: any) {
       {},
     ),
   });
-
+  // store();
   stateContextImp.store = store;
 }

@@ -69,7 +69,9 @@ export class Injector {
     providers.forEach((provider) => {
       const existing = this._records.get('provide' in provider ? provider.provide : provider);
       if (!('multi' in provider) && existing) {
-        throw new Error(`A record for ${'provide' in provider ? provider.provide.toString() : ''} already exists.`);
+        throw new Error(
+          `A record for ${'provide' in provider ? provider.provide.toString() : provider.name} already exists.`,
+        );
       }
 
       const record = this._resolveProvider(provider);

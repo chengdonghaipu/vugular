@@ -912,7 +912,38 @@ export class Compiler {
     // console.log(this.meta);
   }
 
+  generateTs() {
+    const unImports = [];
+    const finalScript = [];
+    if (this.needInjectableInjector && !this.diDepends.includes('attachInjectableInjector')) {
+      unImports.push('attachInjectableInjector');
+    }
+
+    if (unImports.length) {
+      finalScript.unshift(`\nimport { ${unImports.join(', ')} } from 'vue-plus';\n`);
+      // this.ms.prepend(`\nimport { ${unImports.join(", ")} } from 'vue-plus';`)
+    }
+
+    if (finalScript.length) {
+      this.ms.prepend(finalScript.join(''));
+    }
+
+    const map = this.ms.generateMap({
+      source: this.id,
+      hires: true,
+      // includeContent: true
+    });
+    console.log(this.ms.toString());
+
+    return {
+      code: this.ms.toString(),
+      map,
+    };
+  }
   generate() {
+    if (this.originCode.includes('@Injectable') || this.originCode.includes('@State')) {
+      return this.generateTs();
+    }
     const id = this.id;
     const newSourceCode = this.newSourceCode;
     const meta = this.meta;

@@ -15,8 +15,8 @@ import { Watch } from 'vue-plus/watch'
 import { HookReturns, hooksCompose } from 'vue-plus/hooks'
 // import AngularTest from "./test.xvue";
 import type { NavigationGuard } from 'vue-router'
-import { UserState } from '@/angular/store/user.state'
-import { Select } from '@vugular/store'
+import { UpdateUserAge, UserState } from '@/angular/store/user.state'
+import { Select, Store } from '@vugular/store'
 
 function useMouse() {
   // 被组合式函数封装和管理的状态
@@ -86,6 +86,7 @@ export default class AngularDemo
   @Input(true) readonly objectInput!: Readonly<Footer>
   @Output() messageChange = new EventEmitter<string>()
 
+  userState = this.store.use(UserState)
   @Watch<AngularDemo>((context) => context.y.value)
   xChange(newX: number) {
     console.log(`x is ${newX}`)
@@ -99,8 +100,10 @@ export default class AngularDemo
     this.param.value = value
   }
 
-  constructor(public router: Router, public route: Route) {
+  constructor(public store: Store) {
     super()
+    console.log(store)
+    this.userState.dispatch(new UpdateUserAge(18))
     // console.log(router);
     // console.log(route);
     // setTimeout(() => console.log(route.name), 3000)
