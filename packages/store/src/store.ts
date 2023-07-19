@@ -86,13 +86,20 @@ export class StoreState<T, U = any> {
   dispose(): void {
     this.#store.$dispose();
   }
+
   onAction(callback: (context: StoreOnActionListenerContext<U>) => void, detached?: boolean) {
     this.#store.$onAction(callback, detached);
   }
 }
 
 export class Store {
-  use<T>(state: Type<T>) {
-    return new StoreState(state);
+  #stateContainer: WeakMap<Type<any>, StoreState<any>> = new WeakMap<Type<any>, StoreState<any>>();
+
+  use<State, model = any>(state: Type<State>): StoreState<model, State> {
+    if (!this.#stateContainer.has(state)) {
+      this.#stateContainer.set(state, new StoreState<model, State>(state));
+    }
+
+    return this.#stateContainer.get(state)!;
   }
 }
