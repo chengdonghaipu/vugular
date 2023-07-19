@@ -1,29 +1,32 @@
+import { Component } from '@vugular/core'
+import type { LifecycleHook } from '@vugular/core'
 import {
-  Component,
-} from "vue-plus";
-import type { LifecycleHook } from "vue-plus";
-import { EventEmitter, Model, ModelMetaEmitter, ModelModifiers, ModelParams, Output } from "vue-plus/output";
+  EventEmitter,
+  Model,
+  ModelMetaEmitter,
+  ModelModifiers,
+  ModelParams,
+  Output
+} from '@vugular/core'
 
 @Component({
-  styleUrls: ["./demo.less"],
-  components: [
-  ],
+  styleUrls: ['./demo.less'],
+  components: [],
   template: `
     <div>{{ model }}</div>
     <div>{{ modelParams }}</div>
     <button @click="modelChange">modelChange</button>
     <button @click="modelParamsChange">modelParamsChange</button>
-  `,
+  `
 })
 export default class AngularChild implements LifecycleHook {
-  f!: string;
-  @Model() model!: string;
-  @Model('param') modelParams!: string;
+  f!: string
+  @Model() model!: string
+  @Model('param') modelParams!: string
   // @Model() modelModifiers!: ModelMetaEmitter<string>;
   // @Model() modelParamModifiers!: ModelMetaEmitter<string>;
 
-  private update = (event: MouseEvent) => {
-  };
+  private update = (event: MouseEvent) => {}
 
   modelChange = () => {
     // console.log("modelChange", this.model);
@@ -34,15 +37,14 @@ export default class AngularChild implements LifecycleHook {
     this.modelParams += '1'
   }
 
-  constructor() {
-  }
+  constructor() {}
 
   onMounted(): void {
-    console.log(this);
-    window.addEventListener("mousemove", this.update);
+    console.log(this)
+    window.addEventListener('mousemove', this.update)
   }
 
   onUnmounted(): void {
-    window.removeEventListener("mousemove", this.update);
+    window.removeEventListener('mousemove', this.update)
   }
 }

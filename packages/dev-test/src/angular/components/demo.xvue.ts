@@ -1,18 +1,18 @@
-import { Component, Inject, InjectionToken, Optional, SkipSelf } from 'vue-plus'
+import { Component, Inject, InjectionToken, Optional, SkipSelf } from '@vugular/core'
 import type { NavigationGuardNext, RouteLocationNormalized, Router } from 'vue-router'
-import type { Route } from 'vue-plus'
+import type { Route } from '@vugular/core'
 import { onMounted, onUnmounted, ref } from 'vue'
-import type { LifecycleHook } from 'vue-plus'
+import type { LifecycleHook } from '@vugular/core'
 import type { Ref } from 'vue'
 import CommunityIcon from './IconCommunity.vue'
 import ModelDemo from './model.xvue'
-import { Injectable } from 'vue-plus'
-import { Input } from 'vue-plus/input'
-import { EventEmitter, Output } from 'vue-plus/output'
+import { Injectable } from '@vugular/core'
+import { Input } from '@vugular/core'
+import { EventEmitter, Output } from '@vugular/core'
 import AngularChild from './model.xvue.ts.vue'
-import { ViewChild, ViewChildren } from 'vue-plus/view'
-import { Watch } from 'vue-plus/watch'
-import { HookReturns, hooksCompose } from 'vue-plus/hooks'
+import { ViewChild, ViewChildren } from '@vugular/core'
+import { Watch } from '@vugular/core'
+import { HookReturns, hooksCompose } from '@vugular/core'
 // import AngularTest from "./test.xvue";
 import type { NavigationGuard } from 'vue-router'
 import { UpdateUserAge, UserState } from '@/angular/store/user.state'
@@ -68,6 +68,7 @@ type Footer = {
     <div>{{ testGetter }}</div>
     <div>username: {{ username }}</div>
     <div>sex: {{ sex }}</div>
+    <div>age: {{ age }}</div>
     <!--    <AngularTest></AngularTest>-->
   `
 })
@@ -77,6 +78,11 @@ export default class AngularDemo
 {
   @Select(UserState.getName) username?: string
   @Select(UserState.sexFormat) sex?: string
+  @Select(UserState) user?: UserModel
+
+  get age() {
+    return this.user?.age
+  }
   // x = ref(0);
   // y = ref(0);
   param = ref('param')
@@ -122,7 +128,9 @@ export default class AngularDemo
       })
     })
 
-    this.userState.dispatch(new UpdateUserAge(18)).then()
+    setTimeout(() => {
+      this.userState.dispatch(new UpdateUserAge(18)).then()
+    }, 4000)
   }
   modelChange = (v: any) => {
     console.log('modelChange', v)

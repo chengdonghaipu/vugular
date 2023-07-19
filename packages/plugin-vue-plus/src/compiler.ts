@@ -115,9 +115,9 @@ export class Compiler {
   }
 
   private collectDependencies(statements: ts.NodeArray<ts.Statement>) {
-    const dep = ['vue-plus', 'vue'];
+    const dep = ['@vugular/core', 'vue'];
     const appendDep = {
-      'vue-plus': (d: string) => this.diDepends.push(d),
+      '@vugular/core': (d: string) => this.diDepends.push(d),
       vue: (d: string) => this.vueDepends.push(d),
     };
 
@@ -182,7 +182,7 @@ export class Compiler {
 
           if (
             dep &&
-            dep.dep === 'vue-plus' &&
+            dep.dep === '@vugular/core' &&
             (dep.originExport === 'Route' || (!dep.originExport && dep.export === 'Route'))
           ) {
             return "'vg_Route'";
@@ -920,8 +920,8 @@ export class Compiler {
     }
 
     if (unImports.length) {
-      finalScript.unshift(`\nimport { ${unImports.join(', ')} } from 'vue-plus';\n`);
-      // this.ms.prepend(`\nimport { ${unImports.join(", ")} } from 'vue-plus';`)
+      finalScript.unshift(`\nimport { ${unImports.join(', ')} } from '@vugular/core';\n`);
+      // this.ms.prepend(`\nimport { ${unImports.join(", ")} } from '@vugular/core';`)
     }
 
     if (finalScript.length) {
@@ -1053,8 +1053,8 @@ export class Compiler {
     }
 
     if (unImports.length) {
-      finalScript.unshift(`\nimport { ${unImports.join(', ')} } from 'vue-plus';`);
-      // this.ms.prepend(`\nimport { ${unImports.join(", ")} } from 'vue-plus';`)
+      finalScript.unshift(`\nimport { ${unImports.join(', ')} } from '@vugular/core';`);
+      // this.ms.prepend(`\nimport { ${unImports.join(", ")} } from '@vugular/core';`)
     }
 
     finalScript.push(`const __vg_context__: any = {};`);

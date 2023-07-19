@@ -11,11 +11,11 @@
     "jsx": "preserve",
     "paths": {
       "@/*": ["./src/*"],
-      "vue-plus": [
+      "@vugular/core": [
         "../vue-plus/src/index.ts",
         "../vue-plus/dist"
       ],
-      "vue-plus/*": [
+      "@vugular/core/*": [
         "../vue-plus/src/*",
         "../vue-plus/dist/*"
       ],
