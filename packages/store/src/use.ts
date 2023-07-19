@@ -1,8 +1,9 @@
 import { ActionDef, StateContext, Type } from './symbols';
 import { defineStore, Store, StoreDefinition } from 'pinia';
 import { Metadata } from './metadata';
-import { META_KEY, STATE_STORE } from './token';
+import { FULL_STATE_FOR_WINDOW, META_KEY, STATE_STORE } from './token';
 import { ActionHandlerMetaData, MetaDataModel } from './state';
+import { windows } from 'rimraf';
 
 class StateContextImp<T = any> implements StateContext<T> {
   #store: Store<string, any>;
@@ -64,6 +65,11 @@ class StateContextImp<T = any> implements StateContext<T> {
 }
 
 export function useState(state: Type<any>, instance: any) {
+  const allStates: Set<Type<any>> = Metadata.getMetadata(FULL_STATE_FOR_WINDOW, window) || new Set();
+  if (!allStates.has(state)) {
+    allStates.add(state);
+  }
+  Metadata.defineMetadata(FULL_STATE_FOR_WINDOW, allStates, window);
   // const options: StoreOptions<any> = Metadata.getMetadata(META_OPTIONS_KEY, state) || ({} as StoreOptions<any>);
   const metadata: MetaDataModel = Metadata.getMetadata(META_KEY, state) || ({} as MetaDataModel);
 

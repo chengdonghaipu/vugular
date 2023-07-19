@@ -66,7 +66,8 @@ type Footer = {
     <div>{{ param }}</div>
     <div>{{ testProxy }}</div>
     <div>{{ testGetter }}</div>
-    <div>{{ username }}</div>
+    <div>username: {{ username }}</div>
+    <div>sex: {{ sex }}</div>
     <!--    <AngularTest></AngularTest>-->
   `
 })
@@ -75,6 +76,7 @@ export default class AngularDemo
   implements LifecycleHook
 {
   @Select(UserState.getName) username?: string
+  @Select(UserState.sexFormat) sex?: string
   // x = ref(0);
   // y = ref(0);
   param = ref('param')
@@ -138,9 +140,9 @@ export default class AngularDemo
     console.log('this.childRef.value!.model')
     console.log(this.childRef?.model)
 
-    setInterval(() => {
-      this.testProxy += '1'
-    }, 1000)
+    // setInterval(() => {
+    //   this.testProxy += '1'
+    // }, 1000)
   }
 
   onUnmounted(): void {}

@@ -1,6 +1,6 @@
 import { Type, StateContext } from './symbols';
 import { Metadata } from './metadata';
-import { META_KEY, STATE_STORE } from './token';
+import { META_KEY, STATE_GETTERS_PATHS, STATE_STORE } from './token';
 import { ActionHandlerMetaData, MetaDataModel } from './state';
 import { Store as PinaStore, SubscriptionCallback } from 'pinia';
 import { WatchOptions } from 'vue';
@@ -21,9 +21,11 @@ type StoreOnActionListenerContext<T> = {
 
 export class StoreState<T, U = any> {
   readonly #store: PinaStore<string, any>;
+  readonly #gettersPaths: WeakMap<Type<U> | ((state: T) => void), Record<string, any>>;
 
   constructor(private state: Type<U>) {
     const store = Metadata.getMetadata(STATE_STORE, state);
+    this.#gettersPaths = Metadata.getMetadata(STATE_GETTERS_PATHS, state) || new WeakMap();
 
     if (!store) {
       throw Error(`${state.name} is not registered`);
@@ -89,6 +91,20 @@ export class StoreState<T, U = any> {
 
   onAction(callback: (context: StoreOnActionListenerContext<U>) => void, detached?: boolean) {
     this.#store.$onAction(callback, detached);
+  }
+
+  select<T extends (state: any) => any>(rawSelector: T): ReturnType<T> | undefined;
+  select<T>(rawSelector: Type<U>): T | undefined;
+  select(rawSelector: Type<U> | ((state: T) => void)): any {
+    if (this.#gettersPaths.has(rawSelector)) {
+      const { fn, method, stateClass } = this.#gettersPaths.get(rawSelector)!;
+
+      if (stateClass === method) {
+        return this.#store.$state;
+      }
+
+      return this.#store[fn];
+    }
   }
 }
 
