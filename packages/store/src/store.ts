@@ -95,7 +95,12 @@ export class StoreState<T, U = any> {
 
   select<T extends (state: any) => any>(rawSelector: T): ReturnType<T> | undefined;
   select<T>(rawSelector: Type<U>): T | undefined;
+  select<T extends object, K extends keyof T>(rawSelector: K): T[K] | undefined;
   select(rawSelector: Type<U> | ((state: T) => void)): any {
+    if (typeof rawSelector === 'string') {
+      return this.#store[rawSelector];
+    }
+
     if (this.#gettersPaths.has(rawSelector)) {
       const { fn, method, stateClass } = this.#gettersPaths.get(rawSelector)!;
 

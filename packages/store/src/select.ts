@@ -3,7 +3,7 @@ import { Metadata } from './metadata';
 import { FULL_STATE_FOR_WINDOW, STATE_GETTERS_PATHS } from './token';
 import { Store } from './store';
 
-export function Select<T>(rawSelector: Type<T> | ((state: any) => void)): PropertyDecorator {
+export function Select(rawSelector: Type<any> | ((state: any) => void)): PropertyDecorator {
   return <T>(target: any, propertyKey: string | symbol) => {
     let cacheSate: any;
 
