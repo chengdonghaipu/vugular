@@ -1,58 +1,98 @@
-import { Type } from './symbols';
+import { Type, StateContext } from './symbols';
 import { Metadata } from './metadata';
 import { META_KEY, STATE_STORE } from './token';
 import { ActionHandlerMetaData, MetaDataModel } from './state';
+import { Store as PinaStore, SubscriptionCallback } from 'pinia';
+import { WatchOptions } from 'vue';
 
-export class Store {
-  use<T>(state: Type<T>) {
+type StoreOnActionListenerContext<T> = {
+  [K in keyof T]: T[K] extends (...args: infer Args) => infer Return
+    ? Args extends [StateContext<any>, infer ActionArg]
+      ? {
+          name: K;
+          args: [ActionArg];
+          store: any;
+          onError: (callback: (error: unknown) => void) => void;
+          after: Return extends Promise<infer Result> ? (result: Result) => void : (result: ReturnType<T[K]>) => void;
+        }
+      : never
+    : never;
+}[keyof T];
+
+export class StoreState<T, U = any> {
+  readonly #store: PinaStore<string, any>;
+
+  constructor(private state: Type<U>) {
     const store = Metadata.getMetadata(STATE_STORE, state);
 
     if (!store) {
       throw Error(`${state.name} is not registered`);
     }
-    // dispatch
-    return new (class {
-      constructor() {}
 
-      async dispatch(actions: any | any[]): Promise<void> {
-        const originParams = Array.isArray(actions) ? actions : [actions];
-        if (Array.isArray(actions)) {
-          actions = actions.map((action) => action.constructor);
-        } else {
-          actions = actions.constructor;
-        }
-        const metadata: MetaDataModel = Metadata.getMetadata(META_KEY, state) || ({} as MetaDataModel);
-        const results = Object.values(metadata.actions).filter((value: ActionHandlerMetaData) => {
-          const temp = Array.isArray(actions) ? actions : [actions];
+    this.#store = store;
+  }
 
-          return temp.find((action) =>
-            Array.isArray(value.actions) ? value.actions.includes(action) : value.actions === action,
-          );
-        });
+  async dispatch(actions: any | any[]): Promise<void> {
+    const originParams = Array.isArray(actions) ? actions : [actions];
+    if (Array.isArray(actions)) {
+      actions = actions.map((action) => action.constructor);
+    } else {
+      actions = actions.constructor;
+    }
+    const metadata: MetaDataModel = Metadata.getMetadata(META_KEY, this.state) || ({} as MetaDataModel);
+    const results = Object.values(metadata.actions).filter((value: ActionHandlerMetaData) => {
+      const temp = Array.isArray(actions) ? actions : [actions];
 
-        await Promise.all(
-          results.map((value) => {
-            const tempActions = Array.isArray(value.actions) ? value.actions : [value.actions];
-            const filters = tempActions.filter((v) => (Array.isArray(actions) ? actions.includes(v) : actions === v));
+      return temp.find((action) =>
+        Array.isArray(value.actions) ? value.actions.includes(action) : value.actions === action,
+      );
+    });
 
-            return Promise.all(
-              filters.map((action) => {
-                const temp = Array.isArray(actions) ? actions : [actions];
-                const index = temp.findIndex((v) => v === action);
-                const result = store[value.fn](originParams[index]);
+    await Promise.all(
+      results.map((value) => {
+        const tempActions = Array.isArray(value.actions) ? value.actions : [value.actions];
+        const filters = tempActions.filter((v) => (Array.isArray(actions) ? actions.includes(v) : actions === v));
 
-                if (result instanceof Promise) {
-                  return result;
-                }
+        return Promise.all(
+          filters.map((action) => {
+            const temp = Array.isArray(actions) ? actions : [actions];
+            const index = temp.findIndex((v) => v === action);
+            const result = this.#store[value.fn](originParams[index]);
 
-                return Promise.resolve(result);
-              }),
-            );
+            if (result instanceof Promise) {
+              return result;
+            }
+
+            return Promise.resolve(result);
           }),
         );
-      }
+      }),
+    );
+  }
 
-      select() {}
-    })();
+  subscribe(
+    callback: SubscriptionCallback<T>,
+    options?: {
+      detached?: boolean;
+    } & WatchOptions,
+  ) {
+    this.#store.$subscribe(callback, options);
+  }
+
+  reset(): void {
+    this.#store.reset();
+  }
+
+  dispose(): void {
+    this.#store.$dispose();
+  }
+  onAction(callback: (context: StoreOnActionListenerContext<U>) => void, detached?: boolean) {
+    this.#store.$onAction(callback, detached);
+  }
+}
+
+export class Store {
+  use<T>(state: Type<T>) {
+    return new StoreState(state);
   }
 }

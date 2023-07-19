@@ -16,7 +16,8 @@ import { HookReturns, hooksCompose } from 'vue-plus/hooks'
 // import AngularTest from "./test.xvue";
 import type { NavigationGuard } from 'vue-router'
 import { UpdateUserAge, UserState } from '@/angular/store/user.state'
-import { Select, Store } from '@vugular/store'
+import type { UserModel } from '@/angular/store/user.state'
+import { LinkState, Select, Store, StoreState } from '@vugular/store'
 
 function useMouse() {
   // 被组合式函数封装和管理的状态
@@ -65,6 +66,7 @@ type Footer = {
     <div>{{ param }}</div>
     <div>{{ testProxy }}</div>
     <div>{{ testGetter }}</div>
+    <div>{{ username }}</div>
     <!--    <AngularTest></AngularTest>-->
   `
 })
@@ -86,7 +88,7 @@ export default class AngularDemo
   @Input(true) readonly objectInput!: Readonly<Footer>
   @Output() messageChange = new EventEmitter<string>()
 
-  userState = this.store.use(UserState)
+  @LinkState(UserState) userState!: StoreState<UserModel, UserState>
   @Watch<AngularDemo>((context) => context.y.value)
   xChange(newX: number) {
     console.log(`x is ${newX}`)
@@ -102,16 +104,23 @@ export default class AngularDemo
 
   constructor(public store: Store) {
     super()
-    console.log(store)
-    this.userState.dispatch(new UpdateUserAge(18))
-    // console.log(router);
-    // console.log(route);
-    // setTimeout(() => console.log(route.name), 3000)
-    // router.push({
-    //   name: '',
-    //   query: {}
-    // })
-    // const router = useRouter()
+    console.log(this.userState)
+
+    this.userState.subscribe((mutation, state) => {
+      console.log(mutation.type)
+      console.log(mutation.events)
+      console.log(mutation.storeId)
+      console.log(state)
+    })
+
+    this.userState.onAction(({ name, after, onError, args, store }) => {
+      console.log({
+        name,
+        args
+      })
+    })
+
+    this.userState.dispatch(new UpdateUserAge(18)).then()
   }
   modelChange = (v: any) => {
     console.log('modelChange', v)

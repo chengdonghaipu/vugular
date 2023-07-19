@@ -33,7 +33,9 @@ export class UserState {
 
   @Action(UpdateUserAge)
   updateUserAge(ctx: StateContext<UserModel>, action: UpdateUserAge) {
-    console.log(ctx)
-    console.log(action)
+    ctx.patchState({
+      ...ctx.getState(),
+      age: action.age
+    })
   }
 }

@@ -933,7 +933,7 @@ export class Compiler {
       hires: true,
       // includeContent: true
     });
-    console.log(this.ms.toString());
+    // console.log(this.ms.toString());
 
     return {
       code: this.ms.toString(),
