@@ -4,26 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="df8ed6dc-b462-4206-ae2e-5bad0d60f9be" name="变更" comment="perf(core): 添加store功能函数签名 尚未具体实现">
-      <change afterPath="$PROJECT_DIR$/packages/dev-test/.babelrc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/store/src/metadata.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/store/src/select.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/store/src/token.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/store/src/use.ts" afterDir="false" />
+    <list default="true" id="df8ed6dc-b462-4206-ae2e-5bad0d60f9be" name="变更" comment="perf(core): 修改包名vue-plus --&gt; @vugular/core">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/dev-test/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/dev-test/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/src/App.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/dev-test/src/angular/components/demo.xvue.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/src/angular/components/demo.xvue.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/dev-test/src/angular/store/user.state.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/src/angular/store/user.state.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/dev-test/src/components/HelloWorld.vue" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/src/components/HelloWorld.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/dev-test/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/tsconfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/plugin-vue-plus/src/compiler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/plugin-vue-plus/src/compiler.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/store/src/action.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/store/src/action.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/store/src/getter.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/store/src/getter.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/store/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/store/src/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/store/src/state.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/store/src/state.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/store/src/symbols.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/store/src/symbols.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/vue-plus/src/di.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/vue-plus/src/di.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/dev-test/src/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/src/main.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/dev-test/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/dev-test/vite.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/store/rollup.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/packages/store/rollup.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,7 +49,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "E:/project/web/vue-plus/packages",
+    "last_opened_file_path": "E:/project/web/vue-plus/packages/dev-test/src/angular/components",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.standard": "true",
     "node.js.detected.package.tslint": "true",
@@ -76,9 +65,9 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\project\web\vue-plus\packages\dev-test\src\angular\components" />
       <recent name="E:\project\web\vue-plus\packages" />
       <recent name="E:\project\web\vue-plus" />
-      <recent name="E:\project\web\vue-plus\packages\dev-test\src\angular\components" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="E:\project\web\vue-plus\packages\dev-test\src\components" />
@@ -88,11 +77,11 @@
     <configuration name="test.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/test.js" working-dir="$PROJECT_DIR$">
       <method v="2" />
     </configuration>
-    <configuration name="build:plugin-vue-plus" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+    <configuration name="build:store" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
       <scripts>
-        <script value="build:plugin-vue-plus" />
+        <script value="build:store" />
       </scripts>
       <node-interpreter value="project" />
       <envs />
@@ -132,10 +121,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="npm.dev" />
+        <item itemvalue="npm.build:store" />
         <item itemvalue="npm.dev:test" />
         <item itemvalue="Node.js.test.js" />
         <item itemvalue="npm.clean" />
-        <item itemvalue="npm.build:plugin-vue-plus" />
       </list>
     </recent_temporary>
   </component>
@@ -187,7 +176,9 @@
       <workItem from="1688536792358" duration="23191000" />
       <workItem from="1688797748474" duration="597000" />
       <workItem from="1689303092749" duration="72221000" />
-      <workItem from="1689576925194" duration="28320000" />
+      <workItem from="1689576925194" duration="61143000" />
+      <workItem from="1689767268382" duration="5772000" />
+      <workItem from="1689846960925" duration="22241000" />
     </task>
     <task id="LOCAL-00001" summary="perf(dev-text): 例子">
       <created>1679817384935</created>
@@ -266,7 +257,91 @@
       <option name="project" value="LOCAL" />
       <updated>1689605207901</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="perf(core): 绑定&amp;解析state">
+      <created>1689682358174</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1689682358174</updated>
+    </task>
+    <task id="LOCAL-00013" summary="perf(core): 被State装饰的类自动注册为全局依赖">
+      <created>1689682409149</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1689682409149</updated>
+    </task>
+    <task id="LOCAL-00014" summary="perf(core): 修改state使用示例">
+      <created>1689682434086</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1689682434086</updated>
+    </task>
+    <task id="LOCAL-00015" summary="perf(core): 增加metadata支持">
+      <created>1689682461085</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1689682461085</updated>
+    </task>
+    <task id="LOCAL-00016" summary="perf(core): 注册&amp;解析state">
+      <created>1689682484041</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1689682484041</updated>
+    </task>
+    <task id="LOCAL-00017" summary="perf(core): 实现StateContextImp中的dispatch">
+      <created>1689684128699</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1689684128699</updated>
+    </task>
+    <task id="LOCAL-00018" summary="perf(core): 正确编译state">
+      <created>1689688794011</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1689688794011</updated>
+    </task>
+    <task id="LOCAL-00019" summary="perf(core): 支持LinkState">
+      <created>1689753834580</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1689753834580</updated>
+    </task>
+    <task id="LOCAL-00020" summary="perf(core): Store 支持缓存">
+      <created>1689754948189</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1689754948190</updated>
+    </task>
+    <task id="LOCAL-00021" summary="perf(core): 实现装饰Select">
+      <created>1689759256990</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1689759256990</updated>
+    </task>
+    <task id="LOCAL-00022" summary="perf(core): select支持转递状态属性">
+      <created>1689761482875</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1689761482875</updated>
+    </task>
+    <task id="LOCAL-00023" summary="perf(core): 修改包名vue-plus --&gt; @vugular/core">
+      <created>1689764626035</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1689764626035</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -301,6 +376,70 @@
     <MESSAGE value="perf(core): 新增BindThis装饰器" />
     <MESSAGE value="perf(core): 新增sore模块" />
     <MESSAGE value="perf(core): 添加store功能函数签名 尚未具体实现" />
-    <option name="LAST_COMMIT_MESSAGE" value="perf(core): 添加store功能函数签名 尚未具体实现" />
+    <MESSAGE value="perf(core): 绑定&amp;解析state" />
+    <MESSAGE value="perf(core): 被State装饰的类自动注册为全局依赖" />
+    <MESSAGE value="perf(core): 修改state使用示例" />
+    <MESSAGE value="perf(core): 增加metadata支持" />
+    <MESSAGE value="perf(core): 注册&amp;解析state" />
+    <MESSAGE value="perf(core): 实现StateContextImp中的dispatch" />
+    <MESSAGE value="perf(core): 正确编译state" />
+    <MESSAGE value="perf(core): 支持LinkState" />
+    <MESSAGE value="perf(core): Store 支持缓存" />
+    <MESSAGE value="perf(core): 实现装饰Select" />
+    <MESSAGE value="perf(core): select支持转递状态属性" />
+    <MESSAGE value="perf(core): 修改包名vue-plus --&gt; @vugular/core" />
+    <option name="LAST_COMMIT_MESSAGE" value="perf(core): 修改包名vue-plus --&gt; @vugular/core" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <condition expression="options.children.length === 1 &amp;&amp; options.children[0].loc.source.includes('greetings1')" language="JavaScript" mode="CODE_FRAGMENT" />
+          <url>file://$PROJECT_DIR$/node_modules/.pnpm/@vue+compiler-core@3.2.47/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js</url>
+          <line>2099</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <condition expression="options.children.length === 1 &amp;&amp; options.children[0].loc.source.includes('greetings1')" language="JavaScript" />
+          <url>file://$PROJECT_DIR$/node_modules/.pnpm/@vue+compiler-core@3.2.47/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js</url>
+          <line>2100</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <condition expression="ast.loc.source.includes('greetings1')" language="JavaScript" />
+          <url>file://$PROJECT_DIR$/node_modules/.pnpm/@vue+compiler-core@3.2.47/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js</url>
+          <line>2436</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <condition expression="source.includes(&quot;greetings1&quot;) === true" language="JavaScript" mode="CODE_FRAGMENT" />
+          <url>file://$PROJECT_DIR$/node_modules/.pnpm/@vue+compiler-sfc@3.2.47/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js</url>
+          <line>3235</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <condition expression="ast.loc.source.includes('greetings1')" language="JavaScript" />
+          <url>file://$PROJECT_DIR$/node_modules/.pnpm/@vue+compiler-core@3.2.47/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js</url>
+          <line>2344</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint type="javascript">
+          <url>file://$PROJECT_DIR$/node_modules/.pnpm/@vue+compiler-core@3.2.47/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js</url>
+          <line>5707</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/node_modules/.pnpm/@vue+compiler-core@3.2.47/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js</url>
+          <line>2633</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
